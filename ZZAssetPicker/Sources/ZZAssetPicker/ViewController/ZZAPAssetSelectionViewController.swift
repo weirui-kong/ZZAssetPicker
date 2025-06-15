@@ -55,7 +55,7 @@ public class ZZAPAssetSelectionViewController: UIViewController {
     // MARK: - Internal State
 
     private var collectionView: UICollectionView!
-    private var assets: PHFetchResult<PHAsset> = PHFetchResult<PHAsset>()
+    private var store: ZZAPAssetStore?
 
     // MARK: - Lifecycle
 
@@ -138,8 +138,17 @@ public class ZZAPAssetSelectionViewController: UIViewController {
     private func fetchAssets() {
         let options = PHFetchOptions()
         options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-        self.assets = PHAsset.fetchAssets(with: options)
+        self.store = ZZAPAssetStore(fetchResult: PHAsset.fetchAssets(with: options))
         self.collectionView.reloadData()
+        
+        var sampleAssets: [ZZAPAsset] = [ZZAPAsset]()
+        for _ in 0..<200 {
+            let sampleAsset = ZZAPRemoteAsset(remoteURL: URL(string: "https://avatar.iran.liara.run/public")!)
+            sampleAsset.cacheToMemory = true
+            sampleAssets.append(sampleAsset)
+        }
+        // self.store = ZZAPAssetStore(customAssets: sampleAssets)
+        
     }
 }
 
@@ -147,12 +156,14 @@ public class ZZAPAssetSelectionViewController: UIViewController {
 
 extension ZZAPAssetSelectionViewController: UICollectionViewDataSource {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return assets.count
+        return store?.count ?? 0
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let asset = assets.object(at: indexPath.item)
-
+        guard let asset = store?.asset(at: indexPath.item) else {
+            return collectionView.dequeueReusableCell(withReuseIdentifier: ZZAPImageCell.reuseIdentifier, for: indexPath)
+        }
+        
         let identifier: String
         switch asset.mediaType {
         case .video:
@@ -166,6 +177,7 @@ extension ZZAPAssetSelectionViewController: UICollectionViewDataSource {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath)
 
         if let assetCell = cell as? ZZAPAssetRepresentable {
+            assetCell.clearWhenPreparingForReuse = asset.sourceType != .photoLibrary
             assetCell.configure(with: asset)
             assetCell.selectionMode = self.selectionController.selectionMode ?? .none
         }
@@ -185,8 +197,10 @@ extension ZZAPAssetSelectionViewController: UICollectionViewDelegate {
         let fromFrame = cellView.convert(cellView.bounds, to: window)
         let transitionContext = ZZAPTransitionContext(fromImage: cell.thumbnailImage, fromFrame: fromFrame)
 
+        guard let asset = self.store?.asset(at: indexPath.item) else { return }
+        
         selectionController.handleTap?(
-            on: assets.object(at: indexPath.item),
+            on: asset,
             at: indexPath,
             transitionContext: transitionContext
         )

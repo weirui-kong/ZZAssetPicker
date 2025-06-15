@@ -77,7 +77,7 @@ public class ZZAPVideoCell: ZZAPAssetCellBase {
     
     /// Configure the cell with a PHAsset and update duration label
     /// - Parameter asset: The PHAsset representing the video
-    public override func configure(with asset: PHAsset) {
+    public override func configure(with asset: ZZAPAsset) {
         super.configure(with: asset)
         
         // Format the duration from seconds to "m:ss" string

@@ -16,11 +16,16 @@ import UIKit
     static var reuseIdentifier: String { get }
     
     /// The asset this cell represents
-    var asset: PHAsset? { get set }
+    var asset: ZZAPAsset? { get set }
 
     /// Thumbnail image (optional, for transition animation)
     var thumbnailImage: UIImage? { get }
 
+    /// Set this to true to clear the image when preparing the cell for reuse,
+    /// which helps avoid leftover images during cell reuse.
+    /// For high-performance data sources, you may leave this as false.
+    var clearWhenPreparingForReuse: Bool { get set }
+    
     /// The view to use as animation source
     var contentFrameInWindow: CGRect { get }
 
@@ -31,5 +36,5 @@ import UIKit
     var selectionMode: ZZAPSelectionMode { get set }
     
     /// Configure the cell with given asset
-    func configure(with asset: PHAsset)
+    func configure(with asset: ZZAPAsset)
 }

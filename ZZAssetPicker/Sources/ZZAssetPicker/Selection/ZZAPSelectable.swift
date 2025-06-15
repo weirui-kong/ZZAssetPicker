@@ -26,5 +26,5 @@ public protocol ZZAPSelectable: AnyObject {
     ///   - indexPath: Optional indexPath of the asset in the collection view
     ///   - transitionContext: Optional transition context for animation/navigation
     @MainActor
-    @objc optional func handleTap(on asset: PHAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?)
+    @objc optional func handleTap(on asset: ZZAPAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?)
 }

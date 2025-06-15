@@ -13,7 +13,7 @@ public typealias ZZAPTapBehaviorHandler = (_ context: ZZAPSelectionContext) -> V
 
 @objc public class ZZAPSelectionContext: NSObject {
     /// The tapped asset
-    @objc public let asset: PHAsset
+    @objc public let asset: ZZAPAsset
 
     /// IndexPath if known (optional)
     @objc public let indexPath: IndexPath?
@@ -25,15 +25,15 @@ public typealias ZZAPTapBehaviorHandler = (_ context: ZZAPSelectionContext) -> V
     @objc public let selectionMode: ZZAPSelectionMode
 
     /// List of currently selected assets
-    @objc public let selectedAssets: [PHAsset]
+    @objc public let selectedAssets: [ZZAPAsset]
 
     /// Initialization
     @objc public init(
-        asset: PHAsset,
+        asset: ZZAPAsset,
         indexPath: IndexPath?,
         isSelected: Bool,
         selectionMode: ZZAPSelectionMode,
-        selectedAssets: [PHAsset]
+        selectedAssets: [ZZAPAsset]
     ) {
         self.asset = asset
         self.indexPath = indexPath

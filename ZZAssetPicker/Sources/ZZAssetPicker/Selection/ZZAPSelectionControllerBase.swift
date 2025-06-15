@@ -18,7 +18,7 @@ import UIKit
     @objc public var selectionMode: ZZAPSelectionMode = .multiple
     
     /// Currently selected assets (read-only externally)
-    @objc public private(set) var selectedAssets: [PHAsset] = []
+    @objc public private(set) var selectedAssets: [ZZAPAsset] = []
     
     // MARK: - Tap Handling
     
@@ -28,8 +28,8 @@ import UIKit
     ///   - asset: The tapped asset
     ///   - indexPath: Optional indexPath of the asset in collection view
     ///   - transitionContext: Optional context for navigation or animation
-    public func handleTap(on asset: PHAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?) {
-        let isSelected = selectedAssets.contains(asset)
+    public func handleTap(on asset: ZZAPAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?) {
+        let isSelected = selectedAssets.contains { $0.id == asset.id }
         let selectionContext = ZZAPSelectionContext(
             asset: asset,
             indexPath: indexPath,

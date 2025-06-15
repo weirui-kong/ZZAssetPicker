@@ -19,7 +19,7 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
     }
     
     /// The PHAsset associated with this cell
-    public var asset: PHAsset?
+    public var asset: ZZAPAsset?
     
     /// The selected index, 0 means unselected
     public var selectedIndex: Int = 0 {
@@ -36,6 +36,8 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
         }
     }
     
+    public var clearWhenPreparingForReuse: Bool = false
+
     /// Image view displaying the asset thumbnail
     public let imageView = UIImageView()
     
@@ -89,8 +91,11 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
     
     /// Prepare the cell for reuse, cancel any pending image request and reset badge
     public override func prepareForReuse() {
-        PHImageManager.default().cancelImageRequest(requestID)
         self.badgeView.index = 0
+        asset?.cancelImageRequest(requestID: requestID)
+        if clearWhenPreparingForReuse {
+            imageView.image = nil
+        }
     }
     
     
@@ -98,27 +103,23 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
     
     /// Configure the cell with a PHAsset, request thumbnail image
     /// - Parameter asset: The asset to display
-    public func configure(with asset: PHAsset) {
+    public func configure(with asset: ZZAPAsset) {
         self.asset = asset
         
         let manager = PHImageManager.default()
-        let options = PHImageRequestOptions()
-        options.isSynchronous = false
-        options.deliveryMode = .opportunistic
-        options.resizeMode = .fast
+        
         
         let targetSize = CGSize(width: bounds.width * UIScreen.main.scale,
                                 height: bounds.height * UIScreen.main.scale)
         
-        self.requestID = manager.requestImage(for: asset,
-                                              targetSize: targetSize,
-                                              contentMode: .aspectFill,
-                                              options: options) { [weak self] image, info in
+        self.requestID = asset.requestImage(targetSize: targetSize, completion: { [weak self] image in
             guard let self = self else { return }
-            if self.asset?.localIdentifier == asset.localIdentifier {
-                self.imageView.image = image
+            if self.asset?.id == asset.id {
+                DispatchQueue.main.async {
+                    self.imageView.image = image
+                }
             }
-        }
+        })
     }
     
     
@@ -184,7 +185,7 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
     /// Called when the badge view is tapped
     public func badgeViewDidTap(_ badgeView: ZZAPSelectionBadgeView) {
         self.shouldAnimateNextUpdate = true
-        print("Tapped badgeView on asset: \(String(describing: asset?.localIdentifier))")
+        print("Tapped badgeView on asset: \(String(describing: asset?.id))")
         // For test: toggle selectedIndex randomly
         if self.selectedIndex == 0 {
             self.selectedIndex = Int(arc4random()) % 110
@@ -196,6 +197,6 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
     /// Called when the badge view is long pressed
     public func badgeViewDidLongPress(_ badgeView: ZZAPSelectionBadgeView) {
         self.shouldAnimateNextUpdate = true
-        print("Long-pressed badgeView on asset: \(String(describing: asset?.localIdentifier))")
+        print("Long-pressed badgeView on asset: \(String(describing: asset?.id))")
     }
 }

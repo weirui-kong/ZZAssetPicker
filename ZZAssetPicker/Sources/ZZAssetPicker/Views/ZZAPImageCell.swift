@@ -63,7 +63,7 @@ public class ZZAPImageCell: ZZAPAssetCellBase {
     
     /// Configure cell with asset and update live photo icon visibility
     /// - Parameter asset: The PHAsset to configure
-    public override func configure(with asset: PHAsset) {
+    public override func configure(with asset: ZZAPAsset) {
         super.configure(with: asset)
         livePhotoIcon.isHidden = asset.mediaSubtypes != .photoLive
     }
