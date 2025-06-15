@@ -160,6 +160,7 @@
 				DEVELOPMENT_TEAM = 4L8444Q855;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ZZAssetPickerDemo/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow usage";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -188,6 +189,7 @@
 				DEVELOPMENT_TEAM = 4L8444Q855;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ZZAssetPickerDemo/Info.plist;
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Allow usage";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
