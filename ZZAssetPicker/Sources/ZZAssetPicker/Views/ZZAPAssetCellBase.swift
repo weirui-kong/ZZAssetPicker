@@ -7,11 +7,21 @@
 
 import UIKit
 import Photos
+import ZZAssetPicker
+import Foundation
+
+@objc
+public protocol ZZAPAssetCellBaseDelegate: AnyObject {
+    @MainActor
+    func assetCell(_ cell: ZZAPAssetCellBase, didTapBadgeFor asset: ZZAPAsset?)
+}
 
 @objcMembers
 public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZAPSelectionBadgeViewDelegate {
     
     // MARK: - Properties
+    
+    public weak var delegate: ZZAPAssetCellBaseDelegate?
     
     /// Reuse identifier for the cell class
     public class var reuseIdentifier: String {
@@ -105,10 +115,6 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
     /// - Parameter asset: The asset to display
     public func configure(with asset: ZZAPAsset) {
         self.asset = asset
-        
-        let manager = PHImageManager.default()
-        
-        
         let targetSize = CGSize(width: bounds.width * UIScreen.main.scale,
                                 height: bounds.height * UIScreen.main.scale)
         
@@ -122,6 +128,26 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
         })
     }
     
+    public func update(updateOption: ZZAPAssetCellUpdateOption) {
+        if updateOption.contains(option: .thumbnail) {
+            if let asset = asset {
+                let targetSize = CGSize(width: bounds.width * UIScreen.main.scale,
+                                        height: bounds.height * UIScreen.main.scale)
+                self.requestID = asset.requestImage(targetSize: targetSize, completion: { [weak self] image in
+                    guard let self = self else { return }
+                    if self.asset?.id == asset.id {
+                        DispatchQueue.main.async {
+                            self.imageView.image = image
+                        }
+                    }
+                })
+            }
+        }
+        
+        if updateOption.contains(option: .badge) {
+            self.updateSelectionMode(self.selectionMode, index: self.selectedIndex)
+        }
+    }
     
     // MARK: - Public Accessors
     
@@ -186,12 +212,7 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
     public func badgeViewDidTap(_ badgeView: ZZAPSelectionBadgeView) {
         self.shouldAnimateNextUpdate = true
         print("Tapped badgeView on asset: \(String(describing: asset?.id))")
-        // For test: toggle selectedIndex randomly
-        if self.selectedIndex == 0 {
-            self.selectedIndex = Int(arc4random()) % 110
-        } else {
-            self.selectedIndex = 0
-        }
+        self.delegate?.assetCell(self, didTapBadgeFor: self.asset)
     }
     
     /// Called when the badge view is long pressed

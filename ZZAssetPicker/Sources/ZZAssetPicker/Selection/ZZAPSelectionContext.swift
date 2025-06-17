@@ -25,7 +25,7 @@ public typealias ZZAPTapBehaviorHandler = (_ context: ZZAPSelectionContext) -> V
     @objc public let selectionMode: ZZAPSelectionMode
 
     /// List of currently selected assets
-    @objc public let selectedAssets: [ZZAPAsset]
+    @objc public let selectedAssets: [Int : ZZAPAsset]
 
     /// Initialization
     @objc public init(
@@ -33,7 +33,7 @@ public typealias ZZAPTapBehaviorHandler = (_ context: ZZAPSelectionContext) -> V
         indexPath: IndexPath?,
         isSelected: Bool,
         selectionMode: ZZAPSelectionMode,
-        selectedAssets: [ZZAPAsset]
+        selectedAssets: [Int : ZZAPAsset]
     ) {
         self.asset = asset
         self.indexPath = indexPath

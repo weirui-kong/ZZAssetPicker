@@ -11,7 +11,7 @@
 
 @interface ViewController () <ZZAPAssetSelectionDelegate>
 
-@property (nonatomic, strong) ZZAPAssetSelectionViewController *assetSelectionVC;
+@property (nonatomic, strong) ZZAPAssetSelectionPolyViewController *assetSelectionVC;
 
 @end
 
@@ -20,7 +20,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    self.assetSelectionVC = [[ZZAPAssetSelectionViewController alloc] init];
+    self.assetSelectionVC = [[ZZAPAssetSelectionPolyViewController alloc] init];
 
     [self addChildViewController:self.assetSelectionVC];
     self.assetSelectionVC.view.frame = self.view.bounds;

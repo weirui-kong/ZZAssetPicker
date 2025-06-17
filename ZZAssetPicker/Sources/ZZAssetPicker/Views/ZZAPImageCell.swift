@@ -65,7 +65,7 @@ public class ZZAPImageCell: ZZAPAssetCellBase {
     /// - Parameter asset: The PHAsset to configure
     public override func configure(with asset: ZZAPAsset) {
         super.configure(with: asset)
-        livePhotoIcon.isHidden = asset.mediaSubtypes != .photoLive
+        livePhotoIcon.isHidden = !(asset.mediaSubtypes?.contains(.photoLive) ?? true)
     }
     
     // MARK: - Prepare for Reuse

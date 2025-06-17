@@ -37,4 +37,7 @@ import UIKit
     
     /// Configure the cell with given asset
     func configure(with asset: ZZAPAsset)
+    
+    /// Update cell with specific scope
+    func update(updateOption: ZZAPAssetCellUpdateOption)
 }

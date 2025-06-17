@@ -77,3 +77,14 @@ public class ZZAPPHAsset: NSObject, ZZAPAsset {
         PHImageManager.default().cancelImageRequest(requestID)
     }
 }
+
+@objc
+public extension PHPhotoLibrary {
+    static var currentAuthorizationStatus: PHAuthorizationStatus {
+        if #available(iOS 14, *) {
+            return PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        } else {
+            return PHPhotoLibrary.authorizationStatus()
+        }
+    }
+}
