@@ -56,19 +56,12 @@ public class ZZAPAssetSelectionBaseViewController: UIViewController {
     /// External delegate for asset interaction
     public weak var delegate: ZZAPAssetSelectionDelegate?
     
-    private var selectionListenerToken: String?
     public var selectionController: ZZAPSelectable? {
         willSet {
-            if let token = self.selectionListenerToken {
-                self.selectionController?.removeSelectionChangeListener(token: token)
-            }
+            self.selectionController?.removeSelectableDelegate?(self)
         }
         didSet {
-            self.selectionListenerToken = self.selectionController?.addSelectionChangeListener { [weak self] selectedAssets in
-                DispatchQueue.main.async {
-                    self?.handleSelectionChanged(selectedAssets)
-                }
-            }
+            self.selectionController?.addSelectableDelegate?(self)
         }
     }
     
@@ -226,11 +219,32 @@ extension ZZAPAssetSelectionBaseViewController: UICollectionViewDataSource {
     }
 }
 
+// MARK: - ZZAPSelectableDelegate
+
+extension ZZAPAssetSelectionBaseViewController: ZZAPSelectableDelegate {
+    public func selectable(_ selectable: any ZZAPSelectable, from sender: UIViewController?, didChangeSelection selectedAssets: [Int : any ZZAPAsset]) {
+        
+        handleSelectionChanged(selectedAssets)
+        if sender == self {
+            print("Selection updated, triggered by me.")
+        } else {
+            print("Selection updated, not triggered by me.")
+        }
+    }
+    
+    public func selectable(_ selectable: any ZZAPSelectable, from sender: UIViewController?, didFailToSelect asset: any ZZAPAsset, dueTo failure: ZZAPAssetValidationFailure) {
+        if sender == self {
+            print(failure.message + " triggered by me.")
+        } else {
+            print(failure.message + " not triggered by me.")
+        }
+    }
+}
 // MARK: - ZZAPAssetSelectionDelegate
 
 extension ZZAPAssetSelectionBaseViewController: ZZAPAssetCellBaseDelegate {
     public func assetCell(_ cell: ZZAPAssetCellBase, didTapBadgeFor asset: (any ZZAPAsset)?) {
-        self.selectionController?.handleTapOnBadge?(on: asset!, at: nil, transitionContext: nil)
+        self.selectionController?.handleTapOnBadge?(from: self, on: asset!, at: nil, transitionContext: nil)
     }
 }
 
@@ -248,6 +262,7 @@ extension ZZAPAssetSelectionBaseViewController: UICollectionViewDelegate {
         guard let asset = self.store?.asset(at: indexPath.item) else { return }
         
         selectionController?.handleTap?(
+            from: self, 
             on: asset,
             at: indexPath,
             transitionContext: transitionContext

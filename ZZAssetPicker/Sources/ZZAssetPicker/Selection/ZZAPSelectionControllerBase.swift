@@ -17,7 +17,6 @@ import UIKit
         self.maximumSelection = maximumSelection
         self.targetingSelectionCursor = 0
         self.selectedAssets = [:]
-        self.selectionChangeListeners = [:]
     }
     
     /// Optional validation manager to control asset selection validation
@@ -28,7 +27,7 @@ import UIKit
     
     @objc public var maximumSelection: Int = 0
     @objc public var targetingSelectionCursor: Int = 0
-
+    
     /// Currently selected assets (read-only externally)
     @objc public private(set) var selectedAssets: [Int : ZZAPAsset] = [:]
     @objc public var orderedSelectedAssets: [ZZAPAsset] {
@@ -38,12 +37,7 @@ import UIKit
     }
     // MARK: - Tap Handling
     
-    /// Optional handler called when a tap occurs on an asset
-    /// - Parameters:
-    ///   - asset: The PHAsset tapped
-    ///   - indexPath: Optional indexPath of the asset in the collection view
-    ///   - transitionContext: Optional transition context for animation/navigation
-    @objc public func handleTap(on asset: ZZAPAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?) {
+    @objc public func handleTap(from sender: UIViewController, on asset: ZZAPAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?) {
         let isSelected = selectedAssets.values.contains { $0.id == asset.id }
         let selectionContext = ZZAPSelectionContext(
             asset: asset,
@@ -56,13 +50,8 @@ import UIKit
         didTapAsset(selectionContext: selectionContext, transitionContext: transitionContext)
     }
     
-    /// Optional handler called when a tap on badge occurs on an asset
-    /// - Parameters:
-    ///   - asset: The PHAsset tapped
-    ///   - indexPath: Optional indexPath of the asset in the collection view
-    ///   - transitionContext: Optional transition context for animation/navigation
     @MainActor
-    @objc public func handleTapOnBadge(on asset: ZZAPAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?) {
+    @objc public func handleTapOnBadge(from sender: UIViewController, on asset: ZZAPAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?) {
         switch selectionMode {
         case .none:
             print("Selection is disabled")
@@ -74,28 +63,56 @@ import UIKit
                 selectedAssets[1] = asset
             }
         case .multipleCompact:
-            if let currentIndex = selectedAssets.firstIndex(where: { $1.id == asset.id }) {
+            if let currentIndex = selectedAssets.first(where: { $1.id == asset.id })?.key {
                 // Deselect
-                selectedAssets.remove(at: currentIndex)
+                selectedAssets.removeValue(forKey: currentIndex)
+
+                // Shift all following items forward
+                let maxIndex = selectedAssets.keys.max() ?? 0
+                if currentIndex < maxIndex {
+                    for index in (currentIndex+1)...maxIndex {
+                        if let movedAsset = selectedAssets[index] {
+                            selectedAssets[index - 1] = movedAsset
+                            selectedAssets.removeValue(forKey: index)
+                        }
+                    }
+                }
+
+                // Update cursor to the next slot
+                targetingSelectionCursor = (selectedAssets.keys.max() ?? 0) + 1
+
             } else {
-                // Select and append to the last
-                guard selectedAssets.count < maximumSelection else { return }
+                // Select and append to the end
+                guard selectedAssets.count < maximumSelection else {
+                    notifySelectionFailed(
+                        from: sender,
+                        on: asset,
+                        failure: ZZAPAssetValidationFailure(
+                            code: "0x01",
+                            message: "Maximum selection reached."
+                        )
+                    )
+                    return
+                }
+
                 targetingSelectionCursor = (selectedAssets.keys.max() ?? 0) + 1
                 selectedAssets[targetingSelectionCursor] = asset
             }
+
             
         case .multipleSparse:
+            // TODO: To be verified...
             // If the asset is already selected, remove it
             if let currentIndex = selectedAssets.firstIndex(where: { $1.id == asset.id }) {
                 selectedAssets.remove(at: currentIndex)
             } else {
                 // Try to add the asset
-
+                
                 // If the cursor is out of range, move it to the first available slot
                 if targetingSelectionCursor <= 0 || targetingSelectionCursor >= maximumSelection {
                     targetingSelectionCursor = (0..<maximumSelection).first { selectedAssets[$0] == nil } ?? targetingSelectionCursor
                 }
-
+                
                 // Add the asset to current cursor
                 selectedAssets[targetingSelectionCursor] = asset
                 
@@ -109,7 +126,7 @@ import UIKit
                 }
             }
         }
-        self.notifySelectionChanged()
+        self.notifySelectionChanged(from: sender)
     }
     
     
@@ -150,38 +167,36 @@ import UIKit
         // Subclass can override to implement navigation logic
     }
     
-    // MARK: - Selection Change Listener
+    // MARK: - Selection Delegates
     
-    /// Type alias for selection change listener closure
-    /// Provides the updated array of selected assets
-    public typealias SelectionChangeListener = ([Int : ZZAPAsset]) -> Void
+    /// Delegate collection (weak references)
+    private let delegates = NSHashTable<AnyObject>.weakObjects()
     
-    /// Dictionary to hold listeners identified by UUID strings
-    /// Key: listener token (UUID string), Value: listener closure
-    private var selectionChangeListeners: [String: SelectionChangeListener] = [:]
-    
-    /// Register a listener to be notified when selection changes
-    /// - Parameter listener: Closure called with the current selected assets
-    /// - Returns: A token string to be used for removing the listener
-    @objc
-    public func addSelectionChangeListener(_ listener: @escaping SelectionChangeListener) -> String {
-        let id = UUID().uuidString
-        selectionChangeListeners[id] = listener
-        return id
+    /// Add a delegate listener
+    @objc public func addSelectableDelegate(_ delegate: ZZAPSelectableDelegate) {
+        delegates.add(delegate)
     }
     
-    /// Remove a previously registered selection change listener
-    /// - Parameter token: The token returned by `addSelectionChangeListener`
-    @objc
-    public func removeSelectionChangeListener(token: String) {
-        selectionChangeListeners.removeValue(forKey: token)
+    /// Remove a previously added delegate
+    @objc public func removeSelectableDelegate(_ delegate: ZZAPSelectableDelegate) {
+        delegates.remove(delegate)
     }
     
-    /// Notify all registered listeners about the current selection state
-    private func notifySelectionChanged() {
-        let currentSelection = selectedAssets
-        for listener in selectionChangeListeners.values {
-            listener(currentSelection)
+    /// Notify all delegates that the selection changed
+    @MainActor
+    internal func notifySelectionChanged(from sender: UIViewController) {
+        for delegate in delegates.allObjects {
+            (delegate as? ZZAPSelectableDelegate)?
+                .selectable?(self, from: sender, didChangeSelection: selectedAssets)
+        }
+    }
+    
+    /// Notify all delegates that selection failed
+    @MainActor
+    internal func notifySelectionFailed(from sender: UIViewController, on asset: ZZAPAsset, failure: ZZAPAssetValidationFailure) {
+        for delegate in delegates.allObjects {
+            (delegate as? ZZAPSelectableDelegate)?
+                .selectable?(self, from: sender, didFailToSelect: asset, dueTo: failure)
         }
     }
 }
