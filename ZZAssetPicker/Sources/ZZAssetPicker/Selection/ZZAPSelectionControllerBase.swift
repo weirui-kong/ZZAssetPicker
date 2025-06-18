@@ -11,15 +11,31 @@ import UIKit
 
 @objc open class ZZAPSelectionControllerBase: NSObject, ZZAPSelectable {
     
+    init(validationManager: ZZAPAssetValidatorManager? = nil, selectionMode: ZZAPSelectionMode, maximumSelection: Int) {
+        self.validationManager = validationManager
+        self.selectionMode = selectionMode
+        self.maximumSelection = maximumSelection
+        self.targetingSelectionCursor = 0
+        self.selectedAssets = [:]
+        self.selectionChangeListeners = [:]
+    }
+    
     /// Optional validation manager to control asset selection validation
     public var validationManager: ZZAPAssetValidatorManager?
     
     /// Current selection mode (e.g., single or multiple)
-    @objc public var selectionMode: ZZAPSelectionMode = .multiple
+    @objc public var selectionMode: ZZAPSelectionMode = .multipleCompact
     
+    @objc public var maximumSelection: Int = 0
+    @objc public var targetingSelectionCursor: Int = 0
+
     /// Currently selected assets (read-only externally)
     @objc public private(set) var selectedAssets: [Int : ZZAPAsset] = [:]
-    
+    @objc public var orderedSelectedAssets: [ZZAPAsset] {
+        // Return assets sorted by their index
+        // Gaps in indices will result in a shorter array than the max index + 1
+        return selectedAssets.sorted { $0.key < $1.key }.map { $0.value }
+    }
     // MARK: - Tap Handling
     
     /// Optional handler called when a tap occurs on an asset
@@ -57,19 +73,40 @@ import UIKit
             } else {
                 selectedAssets[1] = asset
             }
-            
-        case .multiple:
+        case .multipleCompact:
             if let currentIndex = selectedAssets.firstIndex(where: { $1.id == asset.id }) {
-                let removedKey = selectedAssets[currentIndex].key
+                // Deselect
                 selectedAssets.remove(at: currentIndex)
-                let updatedAssets = selectedAssets.reduce(into: [Int: ZZAPAsset]()) { result, entry in
-                    let newKey = entry.key > removedKey ? entry.key - 1 : entry.key
-                    result[newKey] = entry.value
-                }
-                selectedAssets = updatedAssets
             } else {
-                let nextIndex = selectedAssets.isEmpty ? 0 : (selectedAssets.keys.max()! + 1)
-                selectedAssets[nextIndex] = asset
+                // Select and append to the last
+                guard selectedAssets.count < maximumSelection else { return }
+                targetingSelectionCursor = (selectedAssets.keys.max() ?? 0) + 1
+                selectedAssets[targetingSelectionCursor] = asset
+            }
+            
+        case .multipleSparse:
+            // If the asset is already selected, remove it
+            if let currentIndex = selectedAssets.firstIndex(where: { $1.id == asset.id }) {
+                selectedAssets.remove(at: currentIndex)
+            } else {
+                // Try to add the asset
+
+                // If the cursor is out of range, move it to the first available slot
+                if targetingSelectionCursor <= 0 || targetingSelectionCursor >= maximumSelection {
+                    targetingSelectionCursor = (0..<maximumSelection).first { selectedAssets[$0] == nil } ?? targetingSelectionCursor
+                }
+
+                // Add the asset to current cursor
+                selectedAssets[targetingSelectionCursor] = asset
+                
+                // Find another slot
+                if let next = ((targetingSelectionCursor + 1)..<maximumSelection).first(where: { selectedAssets[$0] == nil }) {
+                    targetingSelectionCursor = next
+                } else if let wrapAround = (0..<maximumSelection).first(where: { selectedAssets[$0] == nil }) {
+                    targetingSelectionCursor = wrapAround
+                } else {
+                    // No empty slot, keep cursor as is
+                }
             }
         }
         self.notifySelectionChanged()

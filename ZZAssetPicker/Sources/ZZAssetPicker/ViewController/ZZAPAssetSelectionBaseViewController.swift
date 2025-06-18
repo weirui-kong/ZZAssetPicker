@@ -214,7 +214,7 @@ extension ZZAPAssetSelectionBaseViewController: UICollectionViewDataSource {
             assetRepresentable.clearWhenPreparingForReuse = asset.sourceType != .photoLibrary
             assetRepresentable.configure(with: asset)
             assetRepresentable.selectionMode = self.selectionController?.selectionMode ?? .none
-            assetRepresentable.selectedIndex = self.selectionController?.selectedAssets?
+            assetRepresentable.selectedIndex = self.selectionController?.selectedAssets
                 .compactMap { $1.id == asset.id ? $0 : nil }
                 .first ?? 0
         }

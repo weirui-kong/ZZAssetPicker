@@ -181,8 +181,9 @@ public class ZZAPSelectionBadgeView: UIView {
                 
                 innerCircle.layer.cornerRadius = (kZZAPBadgeViewRadius - 4)
             }
-            
-        case .multiple:
+        case .multipleCompact:
+            fallthrough
+        case .multipleSparse:
             isHidden = false
             
             if index > 0 {

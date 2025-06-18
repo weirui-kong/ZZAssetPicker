@@ -14,7 +14,7 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
 
     // MARK: - Properties
 
-    private var selectionController: ZZAPSelectable = ZZAPSelectionControllerCommon()
+    private var selectionController: ZZAPSelectable = ZZAPSelectionControllerCommon(selectionMode: .multipleCompact, maximumSelection: 5)
 
     private let tabTypes: [ZZAPTabType] = [.all, .videos, .photos, .livePhotos]
     private let scrollView = UIScrollView()

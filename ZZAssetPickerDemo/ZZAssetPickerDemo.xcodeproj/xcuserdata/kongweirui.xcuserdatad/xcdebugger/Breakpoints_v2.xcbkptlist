@@ -71,22 +71,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "B5BD6933-41CC-47E8-8FBB-5F049259C518"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../ZZAssetPicker/Sources/ZZAssetPicker/Selection/ZZAPSelectionControllerBase.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "147"
-            endingLineNumber = "147"
-            landmarkName = "notifySelectionChanged()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "4142C787-CDEA-4236-8017-668D6A00EAB2"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -94,8 +78,8 @@
             filePath = "../ZZAssetPicker/Sources/ZZAssetPicker/Selection/ZZAPSelectionControllerBase.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "50"
-            endingLineNumber = "50"
+            startingLineNumber = "66"
+            endingLineNumber = "66"
             landmarkName = "handleTapOnBadge(on:at:transitionContext:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -113,6 +97,68 @@
             startingLineNumber = "233"
             endingLineNumber = "233"
             landmarkName = "assetCell(_:didTapBadgeFor:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B865F658-310C-4CF7-88B5-9A18052804FD"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../ZZAssetPicker/Sources/ZZAssetPicker/Selection/ZZAPSelectionControllerBase.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "76"
+            endingLineNumber = "76"
+            landmarkName = "handleTapOnBadge(on:at:transitionContext:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "B865F658-310C-4CF7-88B5-9A18052804FD - 8b818072c5723970"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ZZAssetPicker.ZZAPSelectionControllerBase.handleTapOnBadge(on: ZZAssetPicker.ZZAPAsset, at: Swift.Optional&lt;Foundation.IndexPath&gt;, transitionContext: Swift.Optional&lt;ZZAssetPicker.ZZAPTransitionContext&gt;) -&gt; ()"
+                  moduleName = "ZZAssetPickerDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/kongweirui/Desktop/ZZAssetPicker/ZZAssetPicker/Sources/ZZAssetPicker/Selection/ZZAPSelectionControllerBase.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "77"
+                  endingLineNumber = "77">
+               </Location>
+               <Location
+                  uuid = "B865F658-310C-4CF7-88B5-9A18052804FD - 69a59eb723eb23c1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.Int, ZZAssetPicker.ZZAPAsset) -&gt; Swift.Bool in ZZAssetPicker.ZZAPSelectionControllerBase.handleTapOnBadge(on: ZZAssetPicker.ZZAPAsset, at: Swift.Optional&lt;Foundation.IndexPath&gt;, transitionContext: Swift.Optional&lt;ZZAssetPicker.ZZAPTransitionContext&gt;) -&gt; ()"
+                  moduleName = "ZZAssetPickerDemo"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/kongweirui/Desktop/ZZAssetPicker/ZZAssetPicker/Sources/ZZAssetPicker/Selection/ZZAPSelectionControllerBase.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "77"
+                  endingLineNumber = "77">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "71E03517-2448-4EEF-8975-EDA98FE45997"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../ZZAssetPicker/Sources/ZZAssetPicker/Selection/ZZAPSelectionControllerBase.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "183"
+            endingLineNumber = "183"
+            landmarkName = "notifySelectionChanged()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -15,5 +15,6 @@ import Foundation
     case single
     
     /// Multiple selection mode - multiple assets can be selected
-    case multiple
+    case multipleCompact
+    case multipleSparse
 }
