@@ -37,7 +37,7 @@ import UIKit
     }
     // MARK: - Tap Handling
     
-    @objc public func handleTap(from sender: UIViewController, on asset: ZZAPAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?) {
+    @objc public func handleTap(from sender: AnyObject, on asset: ZZAPAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?) {
         let isSelected = selectedAssets.values.contains { $0.id == asset.id }
         let selectionContext = ZZAPSelectionContext(
             asset: asset,
@@ -51,7 +51,7 @@ import UIKit
     }
     
     @MainActor
-    @objc public func handleTapOnBadge(from sender: UIViewController, on asset: ZZAPAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?) {
+    @objc public func handleTapOnBadge(from sender: AnyObject, on asset: ZZAPAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?) {
         switch selectionMode {
         case .none:
             print("Selection is disabled")
@@ -184,7 +184,7 @@ import UIKit
     
     /// Notify all delegates that the selection changed
     @MainActor
-    internal func notifySelectionChanged(from sender: UIViewController) {
+    internal func notifySelectionChanged(from sender: AnyObject) {
         for delegate in delegates.allObjects {
             (delegate as? ZZAPSelectableDelegate)?
                 .selectable?(self, from: sender, didChangeSelection: selectedAssets)
@@ -193,7 +193,7 @@ import UIKit
     
     /// Notify all delegates that selection failed
     @MainActor
-    internal func notifySelectionFailed(from sender: UIViewController, on asset: ZZAPAsset, failure: ZZAPAssetValidationFailure) {
+    internal func notifySelectionFailed(from sender: AnyObject, on asset: ZZAPAsset, failure: ZZAPAssetValidationFailure) {
         for delegate in delegates.allObjects {
             (delegate as? ZZAPSelectableDelegate)?
                 .selectable?(self, from: sender, didFailToSelect: asset, dueTo: failure)

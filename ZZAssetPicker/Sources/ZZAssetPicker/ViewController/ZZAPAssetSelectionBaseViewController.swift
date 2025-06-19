@@ -222,18 +222,18 @@ extension ZZAPAssetSelectionBaseViewController: UICollectionViewDataSource {
 // MARK: - ZZAPSelectableDelegate
 
 extension ZZAPAssetSelectionBaseViewController: ZZAPSelectableDelegate {
-    public func selectable(_ selectable: any ZZAPSelectable, from sender: UIViewController?, didChangeSelection selectedAssets: [Int : any ZZAPAsset]) {
+    public func selectable(_ selectable: any ZZAPSelectable, from sender: AnyObject?, didChangeSelection selectedAssets: [Int : any ZZAPAsset]) {
         
         handleSelectionChanged(selectedAssets)
-        if sender == self {
+        if let sender = sender, sender === self {
             print("Selection updated, triggered by me.")
         } else {
             print("Selection updated, not triggered by me.")
         }
     }
     
-    public func selectable(_ selectable: any ZZAPSelectable, from sender: UIViewController?, didFailToSelect asset: any ZZAPAsset, dueTo failure: ZZAPAssetValidationFailure) {
-        if sender == self {
+    public func selectable(_ selectable: any ZZAPSelectable, from sender: AnyObject?, didFailToSelect asset: any ZZAPAsset, dueTo failure: ZZAPAssetValidationFailure) {
+        if let sender = sender, sender === self {
             print(failure.message + " triggered by me.")
         } else {
             print(failure.message + " not triggered by me.")

@@ -49,15 +49,15 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
     public var clearWhenPreparingForReuse: Bool = false
 
     /// Image view displaying the asset thumbnail
-    public let imageView = UIImageView()
+    internal let imageView = UIImageView()
     
     /// Controls whether the next update should animate zoom effect
     private var shouldAnimateNextUpdate = false
     
     private let selectedOverlay = UIView()
-    private let badgeView = ZZAPSelectionBadgeView()
+    internal var badgeView: (ZZAPSelectionBadgeViewProtocol & UIView)!
     
-    private var requestID: PHImageRequestID = 0
+    internal var requestID: PHImageRequestID = 0
     
     
     // MARK: - Initialization
@@ -83,12 +83,7 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
         contentView.addSubview(imageView)
         imageView.frame = contentView.bounds
         
-        contentView.addSubview(badgeView)
-        badgeView.delegate = self
-        badgeView.snp.makeConstraints { make in
-            make.top.right.equalToSuperview().inset(6)
-            make.width.height.equalTo(kZZAPBadgeViewRadius * 2)
-        }
+        configureBadgeView()
         
         selectedOverlay.backgroundColor = UIColor.blue.withAlphaComponent(0.3)
         selectedOverlay.isHidden = true
@@ -96,7 +91,15 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
         selectedOverlay.frame = contentView.bounds
     }
     
-    
+    internal func configureBadgeView() {
+        badgeView = ZZAPSelectionIndexBadgeView()
+        contentView.addSubview(badgeView)
+        badgeView.delegate = self
+        badgeView.snp.makeConstraints { make in
+            make.top.right.equalToSuperview().inset(6)
+            make.width.height.equalTo(kZZAPSelectionIndexBadgeViewRadius * 2)
+        }
+    }
     // MARK: - UICollectionViewCell Lifecycle
     
     /// Prepare the cell for reuse, cancel any pending image request and reset badge
@@ -209,14 +212,14 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
     // MARK: - ZZAPSelectionBadgeViewDelegate
     
     /// Called when the badge view is tapped
-    public func badgeViewDidTap(_ badgeView: ZZAPSelectionBadgeView) {
+    public func badgeViewDidTap(_ badgeView: ZZAPSelectionBadgeViewProtocol) {
         self.shouldAnimateNextUpdate = true
         print("Tapped badgeView on asset: \(String(describing: asset?.id))")
         self.delegate?.assetCell(self, didTapBadgeFor: self.asset)
     }
     
     /// Called when the badge view is long pressed
-    public func badgeViewDidLongPress(_ badgeView: ZZAPSelectionBadgeView) {
+    public func badgeViewDidLongPress(_ badgeView: ZZAPSelectionBadgeViewProtocol) {
         self.shouldAnimateNextUpdate = true
         print("Long-pressed badgeView on asset: \(String(describing: asset?.id))")
     }

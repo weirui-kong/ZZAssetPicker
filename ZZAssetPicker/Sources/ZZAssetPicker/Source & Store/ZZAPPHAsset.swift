@@ -68,10 +68,16 @@ public class ZZAPPHAsset: NSObject, ZZAPAsset {
             contentMode: .aspectFill,
             options: options
         ) { image, _ in
+//            let delay = Double.random(in: 0...0.5)
+//            DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
+//                completion(image)
+//            }
             completion(image)
         }
+
         return requestID!
     }
+
 
     public func cancelImageRequest(requestID: Int32) {
         PHImageManager.default().cancelImageRequest(requestID)

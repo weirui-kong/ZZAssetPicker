@@ -27,6 +27,7 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
         view.backgroundColor = .white
         setupScrollView()
         setupPages()
+        setupIndicator()
     }
 
     // MARK: - Setup Scroll View
@@ -69,10 +70,22 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
             previousPage = viewController.view
         }
 
-        // 最后一页右边约束
         previousPage?.snp.makeConstraints { make in
             make.right.equalToSuperview()
         }
+    }
+
+    // MARK: - DEV ONLY
+    private let indicatorBar = ZZAPSelectionIndicatorBar()
+    private func setupIndicator() {
+        indicatorBar.selectionController = self.selectionController
+        view.addSubview(indicatorBar)
+        
+        indicatorBar.snp.makeConstraints { make in
+            make.left.right.bottom.equalTo(self.view)
+            make.height.equalTo(180)
+        }
+        
     }
 
 

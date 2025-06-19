@@ -1,5 +1,5 @@
 //
-//  ZZAPSelectionBadgeView.swift
+//  ZZAPSelectionIndexBadgeView.swift
 //  ZZAssetPicker
 //
 //  Created by 孔维锐 on 6/15/25.
@@ -8,19 +8,10 @@
 import UIKit
 import SnapKit
 
-public let kZZAPBadgeViewRadius: CGFloat = 12.0
-
-@MainActor
-@objc public protocol ZZAPSelectionBadgeViewDelegate: AnyObject {
-    /// Called when badge view is tapped
-    func badgeViewDidTap(_ badgeView: ZZAPSelectionBadgeView)
-    
-    /// Called when badge view is long pressed
-    func badgeViewDidLongPress(_ badgeView: ZZAPSelectionBadgeView)
-}
+public let kZZAPSelectionIndexBadgeViewRadius: CGFloat = 12.0
 
 @objcMembers
-public class ZZAPSelectionBadgeView: UIView {
+public class ZZAPSelectionIndexBadgeView: UIView, ZZAPSelectionBadgeViewProtocol {
     
     // MARK: - Public Properties
     
@@ -133,8 +124,8 @@ public class ZZAPSelectionBadgeView: UIView {
         case .single:
             isHidden = false
             indexLabel.text = nil
-            let targetSize = (kZZAPBadgeViewRadius - 4) * 2
-            let fromSize = (kZZAPBadgeViewRadius - 6) * 2
+            let targetSize = (kZZAPSelectionIndexBadgeViewRadius - 4) * 2
+            let fromSize = (kZZAPSelectionIndexBadgeViewRadius - 6) * 2
             
             if index == 0 {
                 if shouldAnimateNextUpdate {
@@ -179,7 +170,7 @@ public class ZZAPSelectionBadgeView: UIView {
                     layoutIfNeeded()
                 }
                 
-                innerCircle.layer.cornerRadius = (kZZAPBadgeViewRadius - 4)
+                innerCircle.layer.cornerRadius = (kZZAPSelectionIndexBadgeViewRadius - 4)
             }
         case .multipleCompact:
             fallthrough
@@ -196,7 +187,7 @@ public class ZZAPSelectionBadgeView: UIView {
                     innerCircle.snp.remakeConstraints { make in
                         make.edges.equalToSuperview()
                     }
-                    innerCircle.layer.cornerRadius = kZZAPBadgeViewRadius
+                    innerCircle.layer.cornerRadius = kZZAPSelectionIndexBadgeViewRadius
                     
                     UIView.animate(withDuration: 0.25) {
                         self.innerCircle.alpha = 1
@@ -210,7 +201,7 @@ public class ZZAPSelectionBadgeView: UIView {
                     innerCircle.snp.remakeConstraints { make in
                         make.edges.equalToSuperview()
                     }
-                    innerCircle.layer.cornerRadius = kZZAPBadgeViewRadius
+                    innerCircle.layer.cornerRadius = kZZAPSelectionIndexBadgeViewRadius
                 }
                 
             } else {

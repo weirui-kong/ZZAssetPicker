@@ -9,78 +9,87 @@ import Foundation
 import Photos
 import UIKit
 
+// MARK: - Selection Delegate
+
 @objc
 public protocol ZZAPSelectableDelegate: AnyObject {
-
+    
     /// Called when the selection has changed.
     /// - Parameters:
     ///   - selectable: The selection controller that triggered the change.
-    ///   - sender: The sender who triggers this event
+    ///   - sender: The sender who triggers this event.
     ///   - selectedAssets: The current selected assets, ordered by selection index.
     @MainActor
-    @objc optional func selectable(_ selectable: ZZAPSelectable, from sender: UIViewController?, didChangeSelection selectedAssets: [Int : ZZAPAsset])
+    @objc optional func selectable(_ selectable: ZZAPSelectable, from sender: AnyObject?, didChangeSelection selectedAssets: [Int : ZZAPAsset])
     
     /// Called when a selection attempt fails due to validation.
     /// - Parameters:
     ///   - selectable: The selection controller that triggered the failure.
-    ///   - sender: The sender who triggers this event
+    ///   - sender: The sender who triggers this event.
     ///   - asset: The asset that failed validation.
-    ///   - failure: The failure information including reason.
+    ///   - failure: The failure reason/info.
     @MainActor
-    @objc optional func selectable(_ selectable: ZZAPSelectable, from sender: UIViewController?, didFailToSelect asset: ZZAPAsset, dueTo failure: ZZAPAssetValidationFailure)
+    @objc optional func selectable(_ selectable: ZZAPSelectable, from sender: AnyObject?, didFailToSelect asset: ZZAPAsset, dueTo failure: ZZAPAssetValidationFailure)
 }
 
+// MARK: - Selectable Protocol
 
 @objc
 public protocol ZZAPSelectable: AnyObject {
     
-    /// Optional validation manager; if provided, it overrides the validation router
-    @objc optional var validationManager: ZZAPAssetValidatorManager? { get set }
-    
-    /// Optional validation router used if validationManager is not set
-    @objc optional var validationRouter: ZZAPAssetSlotValidationRouter? { get set }
+    // MARK: - Selection State
 
-    @objc optional var maximumSelection: Int { get set }
-
-    /// Currently selected assets (read-only externally)
-    /// Key(aka index) starts from 1
+    /// Currently selected assets (read-only externally).
+    /// Key (index) starts from 1.
     @objc var selectedAssets: [Int : ZZAPAsset] { get }
-    
-    /// Ordered array of selected assets, sorted by their selection index.
-    /// Note: The array may be shorter than expected if there are missing indices in the map.
-    /// For example, if selectedAssets contains [0: A, 2: B], the result will be [A, B],
-    /// and not an array of count 3 with a gap at index 1.
-    /// Current selection mode (single or multiple)
+
+    /// Ordered array of selected assets sorted by selection index.
+    /// Note: Gaps in index will be skipped in result.
     @objc optional var orderedSelectedAssets: [ZZAPAsset] { get }
 
+    /// Current selection mode (single/multiple).
     @objc var selectionMode: ZZAPSelectionMode { get set }
-    
-    /// Cursor pointing to the next available selection index (slot).
-    /// It may automatically change and move to next if selection made.
-    /// Can be reasonable under ZZAPSelectionMode.multipleSparse
+
+    /// Cursor pointing to the next available selection slot (optional).
+    /// Useful under `multipleSparse` mode.
     @objc optional var targetingSelectionCursor: Int { get set }
-    
-    
-    /// Optional handler called when a tap occurs on an asset
+
+    /// Optional max selection count.
+    @objc optional var maximumSelection: Int { get set }
+
+    // MARK: - Validation
+
+    /// Optional validation manager; overrides router if set.
+    @objc optional var validationManager: ZZAPAssetValidatorManager? { get set }
+
+    /// Optional validation router used when manager is not set.
+    @objc optional var validationRouter: ZZAPAssetSlotValidationRouter? { get set }
+
+    // MARK: - Event Handling
+
+    /// Handle tap gesture on an asset.
     /// - Parameters:
-    ///   - sender: Action from source
-    ///   - asset: The PHAsset tapped
-    ///   - indexPath: Optional indexPath of the asset in the collection view
-    ///   - transitionContext: Optional transition context for animation/navigation
+    ///   - sender: Source of interaction.
+    ///   - asset: Target asset.
+    ///   - indexPath: IndexPath in collection view.
+    ///   - transitionContext: Optional transition animation context.
     @MainActor
-    @objc optional func handleTap(from sender: UIViewController, on asset: ZZAPAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?)
-    
-    /// Optional handler called when a tap on badge occurs on an asset
+    @objc optional func handleTap(from sender: AnyObject, on asset: ZZAPAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?)
+
+    /// Handle tap on badge.
     /// - Parameters:
-    ///   - sender: Action from source
-    ///   - asset: The PHAsset tapped
-    ///   - indexPath: Optional indexPath of the asset in the collection view
-    ///   - transitionContext: Optional transition context for animation/navigation
+    ///   - sender: Source of interaction.
+    ///   - asset: Target asset.
+    ///   - indexPath: IndexPath in collection view.
+    ///   - transitionContext: Optional transition animation context.
     @MainActor
-    @objc optional func handleTapOnBadge(from sender: UIViewController, on asset: ZZAPAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?)
-    
+    @objc optional func handleTapOnBadge(from sender: AnyObject, on asset: ZZAPAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?)
+
+    // MARK: - Delegate Management
+
+    /// Add a delegate to receive selection events.
     @objc optional func addSelectableDelegate(_ delegate: ZZAPSelectableDelegate)
 
+    /// Remove a delegate.
     @objc optional func removeSelectableDelegate(_ delegate: ZZAPSelectableDelegate)
-
 }
