@@ -189,15 +189,16 @@ extension ZZAPAssetSelectionBaseViewController: ZZAPSelectableDelegate {
         if let sender = sender, sender === self {
             print("Selection updated, triggered by me.")
         } else {
-            print("Selection updated, not triggered by me.")
+            //print("Selection updated, not triggered by me.")
         }
     }
     
     public func selectable(_ selectable: any ZZAPSelectable, from sender: AnyObject?, didFailToSelect asset: any ZZAPAsset, dueTo failure: ZZAPAssetValidationFailure) {
         if let sender = sender, sender === self {
-            print(failure.message + " triggered by me.")
+            print(failure.message + ", triggered by me.")
+            print(failure.extra)
         } else {
-            print(failure.message + " not triggered by me.")
+            //print(failure.message + ", not triggered by me.")
         }
     }
 }

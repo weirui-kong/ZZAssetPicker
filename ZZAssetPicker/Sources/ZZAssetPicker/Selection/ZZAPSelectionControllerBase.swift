@@ -42,7 +42,7 @@ import UIKit
         // Max limit
         if selectedAssets.count >= maximumSelection {
             notifySelectionFailed(from: sender, on: asset, failure: ZZAPAssetValidationFailure(
-                code: "0x01",
+                code: "0x0000",
                 message: "Maximum selection reached."
             ))
             return

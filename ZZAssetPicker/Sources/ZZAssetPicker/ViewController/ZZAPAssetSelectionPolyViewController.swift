@@ -34,7 +34,8 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
     // MARK: - Setup Validation Rules
     private func setupValidationRules() {
         let durationRule = ZZAPDurationRule(maxDuration: 60)
-        let validatior = ZZAPAssetValidatorManager(rules: [durationRule])
+        let sizeRule = ZZAPResolutionRule.lessThan(width: 2000, height: 2000)
+        let validatior = ZZAPAssetValidatorManager(rules: [durationRule, sizeRule])
         if let selectionController = selectionController as? ZZAPSelectionControllerCommon {
             selectionController.validationManager = validatior
         }

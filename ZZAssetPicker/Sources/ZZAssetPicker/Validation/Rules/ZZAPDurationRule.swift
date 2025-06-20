@@ -25,10 +25,10 @@ import Photos
     /// - Returns: True if duration <= maxDuration or asset is not video.
     public func validate(asset: ZZAPAsset) -> ZZAPAssetValidationFailure? {
         guard asset.mediaType == .video else {
-            return ZZAPAssetValidationFailure(code: "0x10", message: "Not a video", extra: nil)
+            return nil
         }
         guard asset.duration <= maxDuration else {
-            return ZZAPAssetValidationFailure(code: "0x11", message: "Video too long", extra: nil)
+            return ZZAPAssetValidationFailure(code: "0x2100", message: "Video too long", extra: nil)
 
         }
         return nil
