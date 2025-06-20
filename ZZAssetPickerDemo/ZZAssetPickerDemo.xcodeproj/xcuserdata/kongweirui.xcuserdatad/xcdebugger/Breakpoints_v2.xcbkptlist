@@ -55,22 +55,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "4142C787-CDEA-4236-8017-668D6A00EAB2"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../ZZAssetPicker/Sources/ZZAssetPicker/Selection/ZZAPSelectionControllerBase.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "55"
-            endingLineNumber = "55"
-            landmarkName = "handleTapOnBadge(from:on:at:transitionContext:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "D6F1CE19-F864-4C72-920F-F7A7183BA910"
             shouldBeEnabled = "No"
             ignoreCount = "0"
@@ -78,25 +62,9 @@
             filePath = "../ZZAssetPicker/Sources/ZZAssetPicker/ViewController/ZZAPAssetSelectionBaseViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "247"
-            endingLineNumber = "247"
+            startingLineNumber = "215"
+            endingLineNumber = "215"
             landmarkName = "assetCell(_:didTapBadgeFor:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "B865F658-310C-4CF7-88B5-9A18052804FD"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "../ZZAssetPicker/Sources/ZZAssetPicker/Selection/ZZAPSelectionControllerBase.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "65"
-            endingLineNumber = "65"
-            landmarkName = "handleTapOnBadge(from:on:at:transitionContext:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

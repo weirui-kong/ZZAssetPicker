@@ -80,13 +80,13 @@ public class ZZAPSelectionIndexBadgeView: UIView, ZZAPSelectionBadgeViewProtocol
         outerCircle.layer.shadowOpacity = 0.15
         outerCircle.layer.shadowOffset = CGSize(width: 0, height: 1)
         outerCircle.layer.shadowRadius = 2
-        outerCircle.backgroundColor = .clear
+        outerCircle.backgroundColor = .white.withAlphaComponent(0.2)
     }
     
     /// Setup the inner circle with default background color
     private func setupInnerCircle() {
         outerCircle.addSubview(innerCircle)
-        innerCircle.backgroundColor = UIColor(red: 233/255, green: 68/255, blue: 89/255, alpha: 1)
+        innerCircle.backgroundColor = .zzapThemeColor
     }
     
     /// Setup the index label for showing selection number

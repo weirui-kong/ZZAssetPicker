@@ -45,8 +45,8 @@ import Photos
     ///   - asset: Asset to validate.
     ///   - slot: Slot index.
     /// - Returns: True if asset passes validation or no rules set.
-    @objc public func validate(asset: PHAsset, forSlot slot: Int) -> Bool {
-        return manager(for: slot)?.validate(asset: asset) ?? true
+    @objc public func validate(asset: ZZAPAsset, forSlot slot: Int) -> ZZAPAssetValidationFailure? {
+        return manager(for: slot)?.validate(asset: asset)
     }
     
     /// Get validation failure details for an asset and slot.
@@ -55,7 +55,7 @@ import Photos
     ///   - asset: Asset to check.
     ///   - slot: Slot index.
     /// - Returns: Array of validation failure details.
-    @objc public func failureInfos(for asset: PHAsset, slot: Int) -> [ZZAPAssetValidationFailure] {
+    @objc public func failureInfos(for asset: ZZAPAsset, slot: Int) -> [ZZAPAssetValidationFailure] {
         return manager(for: slot)?.failureInfos(for: asset) ?? []
     }
 }

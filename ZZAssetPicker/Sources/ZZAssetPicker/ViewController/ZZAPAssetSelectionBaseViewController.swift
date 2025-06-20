@@ -75,7 +75,6 @@ public class ZZAPAssetSelectionBaseViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupCollectionView()
-        //requestPhotoAccessAndFetchAssets()
         self.collectionView.reloadData()
     }
     
@@ -138,45 +137,7 @@ public class ZZAPAssetSelectionBaseViewController: UIViewController {
         }
     }
     
-    // MARK: - Photo Access and Fetching
     
-    //    /// Request permission to access photo library and fetch assets upon success
-    //    private func requestPhotoAccessAndFetchAssets() {
-    //        if #available(iOS 14, *) {
-    //            PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
-    //                guard status == .authorized || status == .limited else { return }
-    //
-    //                DispatchQueue.main.async {
-    //                    self.fetchAssets()
-    //                }
-    //            }
-    //        } else {
-    //            PHPhotoLibrary.requestAuthorization { status in
-    //                guard status == .authorized else { return }
-    //
-    //                DispatchQueue.main.async {
-    //                    self.fetchAssets()
-    //                }
-    //            }
-    //        }
-    //    }
-    //
-    //    /// Fetch assets from photo library sorted by creation date descending
-    //    private func fetchAssets() {
-    //        let options = PHFetchOptions()
-    //        options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-    //        self.store = ZZAPAssetStore(fetchResult: PHAsset.fetchAssets(with: options))
-    //        self.collectionView.reloadData()
-    //
-    //        var sampleAssets: [ZZAPAsset] = [ZZAPAsset]()
-    //        for _ in 0..<200 {
-    //            let sampleAsset = ZZAPRemoteAsset(remoteURL: URL(string: "https://avatar.iran.liara.run/public")!)
-    //            sampleAsset.cacheToMemory = true
-    //            sampleAssets.append(sampleAsset)
-    //        }
-    //        // self.store = ZZAPAssetStore(customAssets: sampleAssets)
-    //
-    //    }
 }
 
 // MARK: - UICollectionViewDataSource
@@ -244,7 +205,14 @@ extension ZZAPAssetSelectionBaseViewController: ZZAPSelectableDelegate {
 
 extension ZZAPAssetSelectionBaseViewController: ZZAPAssetCellBaseDelegate {
     public func assetCell(_ cell: ZZAPAssetCellBase, didTapBadgeFor asset: (any ZZAPAsset)?) {
-        self.selectionController?.handleTapOnBadge?(from: self, on: asset!, at: nil, transitionContext: nil)
+        guard let asset = asset else { return }
+        let index = self.selectionController?.index?(self, for: asset) ?? NSNotFound
+        if index == NSNotFound {
+            self.selectionController?.addAsset?(self, asset)
+        } else {
+            self.selectionController?.removeAsset?(self, at: index)
+        }
+        
     }
 }
 
@@ -261,12 +229,7 @@ extension ZZAPAssetSelectionBaseViewController: UICollectionViewDelegate {
         
         guard let asset = self.store?.asset(at: indexPath.item) else { return }
         
-        selectionController?.handleTap?(
-            from: self, 
-            on: asset,
-            at: indexPath,
-            transitionContext: transitionContext
-        )
+        preview(selectionContext: nil, transitionContext: transitionContext)
     }
 }
 
@@ -291,5 +254,46 @@ private extension ZZAPAssetSelectionBaseViewController {
                              options: option) { image, _ in
             completion(image)
         }
+    }
+    
+    // TODO: Dev code... will be removed later
+    @MainActor
+    @objc public func preview(selectionContext: ZZAPSelectionContext?, transitionContext: ZZAPTransitionContext?) {
+        guard let window = UIApplication.shared.windows.first(where: { $0.isKeyWindow }),
+              let image = transitionContext?.fromImage else {
+            return
+        }
+
+        let startFrame = transitionContext?.fromFrame ?? .zero
+
+        let animatingImageView = UIImageView(image: image)
+        animatingImageView.contentMode = .scaleAspectFill
+        animatingImageView.clipsToBounds = true
+        animatingImageView.frame = startFrame
+
+        window.addSubview(animatingImageView)
+
+        let backgroundView = UIView(frame: window.bounds)
+        backgroundView.backgroundColor = .black
+        backgroundView.alpha = 0
+        window.insertSubview(backgroundView, belowSubview: animatingImageView)
+
+        UIView.animate(
+            withDuration: 0.5,
+            delay: 0,
+            usingSpringWithDamping: 0.7,
+            initialSpringVelocity: 0.8,
+            options: [.curveEaseInOut],
+            animations: {
+                animatingImageView.frame = window.bounds
+                backgroundView.alpha = 1
+            },
+            completion: { _ in
+                DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    animatingImageView.removeFromSuperview()
+                    backgroundView.removeFromSuperview()
+                }
+            }
+        )
     }
 }

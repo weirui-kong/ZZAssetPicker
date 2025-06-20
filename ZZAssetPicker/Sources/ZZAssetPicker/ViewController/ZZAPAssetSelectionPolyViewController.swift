@@ -28,8 +28,18 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
         setupScrollView()
         setupPages()
         setupIndicator()
+        setupValidationRules()
     }
 
+    // MARK: - Setup Validation Rules
+    private func setupValidationRules() {
+        let durationRule = ZZAPDurationRule(maxDuration: 60)
+        let validatior = ZZAPAssetValidatorManager(rules: [durationRule])
+        if let selectionController = selectionController as? ZZAPSelectionControllerCommon {
+            selectionController.validationManager = validatior
+        }
+    }
+    
     // MARK: - Setup Scroll View
 
     private func setupScrollView() {

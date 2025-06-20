@@ -56,7 +56,16 @@ public class ZZAPPHAsset: NSObject, ZZAPAsset {
         asset.modificationDate
     }
     
+    public var cacheImage: Bool = false
+    
+    private var cachedImage: UIImage?
+    
     public func requestImage(targetSize: CGSize, completion: @escaping (UIImage?) -> Void) -> Int32 {
+        if let cachedImage = cachedImage, cacheImage {
+            completion(cachedImage)
+            return 0
+        }
+        
         let options = PHImageRequestOptions()
         options.isSynchronous = false
         options.deliveryMode = .opportunistic
@@ -68,6 +77,7 @@ public class ZZAPPHAsset: NSObject, ZZAPAsset {
             contentMode: .aspectFill,
             options: options
         ) { image, _ in
+            self.cachedImage = self.cacheImage ? image : nil
 //            let delay = Double.random(in: 0...0.5)
 //            DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
 //                completion(image)

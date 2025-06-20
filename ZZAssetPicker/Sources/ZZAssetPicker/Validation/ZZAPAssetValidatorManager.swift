@@ -22,20 +22,20 @@ import Photos
     
     /// Validate an asset by checking all rules.
     /// - Parameter asset: The PHAsset to validate.
-    /// - Returns: True if all rules pass, false otherwise.
-    @objc public func validate(asset: PHAsset) -> Bool {
+    /// - Returns: Nil if all rules pass, or the first fail reason otherwise.
+    @objc public func validate(asset: ZZAPAsset) -> ZZAPAssetValidationFailure? {
         for rule in rules {
-            if !rule.validate(asset: asset) {
-                return false
+            if let failure = rule.validate(asset: asset) {
+                return failure
             }
         }
-        return true
+        return nil
     }
     
     /// Collect all failure infos from rules for a given asset.
     /// - Parameter asset: The PHAsset to check.
     /// - Returns: Array of failure details for all failing rules.
-    @objc public func failureInfos(for asset: PHAsset) -> [ZZAPAssetValidationFailure] {
-        return rules.compactMap { $0.failureInfo?(for: asset) }
+    @objc public func failureInfos(for asset: ZZAPAsset) -> [ZZAPAssetValidationFailure] {
+        return rules.compactMap { $0.validate(asset: asset) }
     }
 }

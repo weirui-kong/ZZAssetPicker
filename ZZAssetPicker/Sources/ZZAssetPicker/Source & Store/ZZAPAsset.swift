@@ -31,6 +31,10 @@ public protocol ZZAPAsset: AnyObject {
     /// A user-friendly modification date (optional)
     @objc var modificationDate: Date? { get }
     
+    /// A  image temporarily will be stored in memory that can be used without calling fetch frequently (optional)
+    /// You are responsible for managing its lifecycle
+    @objc optional var cacheImage: Bool { get set }
+    
     /// Request image with target size and callback
     @objc func requestImage(targetSize: CGSize, completion: @escaping (UIImage?) -> Void) -> Int32
     

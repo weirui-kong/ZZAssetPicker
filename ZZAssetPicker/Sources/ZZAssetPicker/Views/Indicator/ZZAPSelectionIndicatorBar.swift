@@ -42,9 +42,9 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
 
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.minimumLineSpacing = kZZAPSelectionShapeBadgeViewRadius * 1.5
+        layout.minimumLineSpacing = kZZAPSelectionShapeBadgeViewRadius * 0.5
         layout.minimumInteritemSpacing = kZZAPSelectionShapeBadgeViewRadius * 1.5
-        layout.itemSize = CGSize(width: 64, height: 64)
+        layout.itemSize = CGSize(width: 72, height: 72)
 
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.showsHorizontalScrollIndicator = false
@@ -54,18 +54,18 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
         composeButton = UIButton(type: .system)
         composeButton.setTitle("一键成片", for: .normal)
         composeButton.setTitleColor(.white, for: .normal)
-        composeButton.backgroundColor = UIColor.systemGreen
+        composeButton.backgroundColor = .zzapThemeColor
         composeButton.titleLabel?.font = .boldSystemFont(ofSize: 14)
         composeButton.layer.cornerRadius = 8
-        composeButton.contentEdgeInsets = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
+        composeButton.contentEdgeInsets = UIEdgeInsets(top: 6, left: 16, bottom: 6, right: 16)
 
         nextButton = UIButton(type: .system)
         nextButton.setTitle("下一步", for: .normal)
         nextButton.setTitleColor(.white, for: .normal)
-        nextButton.backgroundColor = UIColor.systemBlue
+        nextButton.backgroundColor = .zzapThemeColor
         nextButton.titleLabel?.font = .boldSystemFont(ofSize: 14)
         nextButton.layer.cornerRadius = 8
-        nextButton.contentEdgeInsets = UIEdgeInsets(top: 6, left: 12, bottom: 6, right: 12)
+        nextButton.contentEdgeInsets = UIEdgeInsets(top: 6, left: 16, bottom: 6, right: 16)
 
         buttonStackView = UIStackView(arrangedSubviews: [nextButton, composeButton])
         buttonStackView.axis = .horizontal
@@ -115,7 +115,7 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
         buttonStackView.snp.makeConstraints { make in
             make.right.equalToSuperview().inset(12)
             make.bottom.equalToSuperview().inset(8)
-            make.height.equalTo(24)
+            make.height.equalTo(32)
         }
 
         composeButton.addTarget(self, action: #selector(didTapCompose), for: .touchUpInside)
@@ -139,6 +139,15 @@ extension ZZAPSelectionIndicatorBar: ZZAPSelectableDelegate {
     }
 }
 
+extension ZZAPSelectionIndicatorBar: ZZAPAssetCellBaseDelegate {
+    public func assetCell(_ cell: ZZAPAssetCellBase, didTapBadgeFor asset: (any ZZAPAsset)?) {
+        guard let asset = asset else { return }
+        guard let index = selectionController?.index?(self, for: asset), index != NSNotFound else { return }
+        selectionController?.removeAsset?(self, at: index)
+    }
+}
+
+
 extension ZZAPSelectionIndicatorBar: UICollectionViewDataSource, UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return selectionController?.selectedAssets.count ?? 0
@@ -151,11 +160,15 @@ extension ZZAPSelectionIndicatorBar: UICollectionViewDataSource, UICollectionVie
         else {
             return UICollectionViewCell()
         }
-
+        cell.delegate = self
         cell.selectionMode = selectionController?.selectionMode ?? .none
         cell.selectedIndex = indexPath.item + 1
         cell.clearWhenPreparingForReuse = false
         cell.configure(with: asset)
+        if let asset = asset as? ZZAPPHAsset {
+            asset.cacheImage = true
+        }
+        
         return cell
     }
 }

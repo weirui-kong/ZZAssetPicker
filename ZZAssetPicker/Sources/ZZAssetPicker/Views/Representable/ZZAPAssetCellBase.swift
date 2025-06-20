@@ -78,17 +78,20 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
     
     /// Setup subviews and layout constraints
     private func setupViews() {
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        contentView.addSubview(imageView)
-        imageView.frame = contentView.bounds
-        
+        configureImageView()
         configureBadgeView()
         
         selectedOverlay.backgroundColor = UIColor.blue.withAlphaComponent(0.3)
         selectedOverlay.isHidden = true
         contentView.addSubview(selectedOverlay)
         selectedOverlay.frame = contentView.bounds
+    }
+    
+    internal func configureImageView() {
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        contentView.addSubview(imageView)
+        imageView.frame = contentView.bounds
     }
     
     internal func configureBadgeView() {

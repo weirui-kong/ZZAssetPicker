@@ -26,9 +26,7 @@ public class ZZAPIndicatorAssetCell: ZZAPAssetCellBase {
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        imageView.layer.cornerRadius = 8
-        imageView.clipsToBounds = true
-        layer.masksToBounds = false
+        
         setupPlaceholderUI()
     }
 
@@ -48,6 +46,19 @@ public class ZZAPIndicatorAssetCell: ZZAPAssetCellBase {
         }
     }
 
+    override internal func configureImageView() {
+        imageView.contentMode = .scaleAspectFill
+        imageView.layer.cornerRadius = 8
+        imageView.clipsToBounds = true
+        contentView.addSubview(imageView)
+        
+        imageView.snp.makeConstraints { make in
+            make.left.bottom.equalTo(contentView)
+            make.width.equalTo(contentView).offset(-0.75 * kZZAPSelectionShapeBadgeViewRadius)
+            make.height.equalTo(contentView).offset(-0.75 * kZZAPSelectionShapeBadgeViewRadius)
+        }
+    }
+    
     override internal func configureBadgeView() {
         badgeView = ZZAPSelectionShapeBadgeView()
         
@@ -64,8 +75,7 @@ public class ZZAPIndicatorAssetCell: ZZAPAssetCellBase {
 
         badgeView.snp.makeConstraints { make in
             make.width.height.equalTo(kZZAPSelectionShapeBadgeViewRadius * 2)
-            make.left.equalTo(self.snp.right).offset(-kZZAPSelectionShapeBadgeViewRadius * 1.25)
-            make.top.equalTo(self.snp.top).offset(-kZZAPSelectionShapeBadgeViewRadius * 0.75)
+            make.right.top.equalTo(contentView)
         }
     }
 
@@ -97,7 +107,7 @@ public class ZZAPIndicatorAssetCell: ZZAPAssetCellBase {
             DispatchQueue.main.async {
                 self.imageView.image = image
                 self.isLoadingScheduled = false
-
+                self.requestID = 0
                 let success = image != nil
                 if success {
                     self.blurView.isHidden = true
@@ -108,8 +118,7 @@ public class ZZAPIndicatorAssetCell: ZZAPAssetCellBase {
         }
     }
     
-    public override func updateSelectionMode(_ mode: ZZAPSelectionMode, index: Int) {
-        
+    public override func badgeViewDidTap(_ badgeView: any ZZAPSelectionBadgeViewProtocol) {
+        delegate?.assetCell(self, didTapBadgeFor: asset)
     }
 }
-

@@ -39,57 +39,39 @@ public protocol ZZAPSelectable: AnyObject {
     
     // MARK: - Selection State
 
-    /// Currently selected assets (read-only externally).
-    /// Key (index) starts from 1.
     @objc var selectedAssets: [Int : ZZAPAsset] { get }
 
-    /// Ordered array of selected assets sorted by selection index.
-    /// Note: Gaps in index will be skipped in result.
     @objc optional var orderedSelectedAssets: [ZZAPAsset] { get }
 
-    /// Current selection mode (single/multiple).
     @objc var selectionMode: ZZAPSelectionMode { get set }
 
-    /// Cursor pointing to the next available selection slot (optional).
-    /// Useful under `multipleSparse` mode.
     @objc optional var targetingSelectionCursor: Int { get set }
 
-    /// Optional max selection count.
     @objc optional var maximumSelection: Int { get set }
 
     // MARK: - Validation
 
-    /// Optional validation manager; overrides router if set.
     @objc optional var validationManager: ZZAPAssetValidatorManager? { get set }
 
-    /// Optional validation router used when manager is not set.
     @objc optional var validationRouter: ZZAPAssetSlotValidationRouter? { get set }
 
-    // MARK: - Event Handling
+    // MARK: - Selection Actions
 
-    /// Handle tap gesture on an asset.
-    /// - Parameters:
-    ///   - sender: Source of interaction.
-    ///   - asset: Target asset.
-    ///   - indexPath: IndexPath in collection view.
-    ///   - transitionContext: Optional transition animation context.
     @MainActor
-    @objc optional func handleTap(from sender: AnyObject, on asset: ZZAPAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?)
+    @objc optional func addAsset(_ sender: AnyObject?, _ asset: ZZAPAsset)
 
-    /// Handle tap on badge.
-    /// - Parameters:
-    ///   - sender: Source of interaction.
-    ///   - asset: Target asset.
-    ///   - indexPath: IndexPath in collection view.
-    ///   - transitionContext: Optional transition animation context.
     @MainActor
-    @objc optional func handleTapOnBadge(from sender: AnyObject, on asset: ZZAPAsset, at indexPath: IndexPath?, transitionContext: ZZAPTransitionContext?)
+    @objc optional func addAsset(_ sender: AnyObject?, _ asset: ZZAPAsset, at index: Int)
+
+    @MainActor
+    @objc optional func removeAsset(_ sender: AnyObject?, at index: Int)
+
+    @MainActor
+    @objc optional func index(_ sender: AnyObject?, for asset: ZZAPAsset) -> Int
 
     // MARK: - Delegate Management
 
-    /// Add a delegate to receive selection events.
     @objc optional func addSelectableDelegate(_ delegate: ZZAPSelectableDelegate)
 
-    /// Remove a delegate.
     @objc optional func removeSelectableDelegate(_ delegate: ZZAPSelectableDelegate)
 }
