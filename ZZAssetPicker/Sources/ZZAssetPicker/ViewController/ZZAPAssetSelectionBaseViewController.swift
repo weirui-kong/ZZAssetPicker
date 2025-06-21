@@ -38,6 +38,13 @@ public class ZZAPAssetSelectionBaseViewController: UIViewController {
     public var store: ZZAPAssetStore? {
         didSet {
             self.collectionView?.reloadData()
+            if store == nil {
+                loadingIndicator.isHidden = false
+                loadingIndicator.startAnimating()
+            } else {
+                loadingIndicator.isHidden = true
+                loadingIndicator.stopAnimating()
+            }
         }
     }
     
@@ -68,17 +75,32 @@ public class ZZAPAssetSelectionBaseViewController: UIViewController {
     // MARK: - Internal State
     
     private var collectionView: UICollectionView!
-    
+    private let loadingIndicator: UIActivityIndicatorView = {
+        let indicator = UIActivityIndicatorView(style: .gray)
+        indicator.hidesWhenStopped = true
+        return indicator
+    }()
     // MARK: - Lifecycle
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupCollectionView()
+        setupLoadingIndicator()
         self.collectionView.reloadData()
     }
     
     // MARK: - Setup Methods
+    
+    /// Setup and configure loading view layout and appearance
+    private func setupLoadingIndicator() {
+        view.addSubview(loadingIndicator)
+        loadingIndicator.startAnimating()
+        loadingIndicator.snp.makeConstraints { make in
+            make.centerX.equalTo(self.view.snp.centerX)
+            make.centerY.equalTo(self.view.snp.centerY)
+        }
+    }
     
     /// Setup and configure collection view layout and appearance
     private func setupCollectionView() {
@@ -92,12 +114,18 @@ public class ZZAPAssetSelectionBaseViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = .white
+        collectionView.contentSize = view.bounds.size
+        collectionView.clipsToBounds = false
         
         // Register cell types
         collectionView.register(ZZAPImageCell.self, forCellWithReuseIdentifier: ZZAPImageCell.reuseIdentifier)
         collectionView.register(ZZAPVideoCell.self, forCellWithReuseIdentifier: ZZAPVideoCell.reuseIdentifier)
         
         view.addSubview(collectionView)
+        collectionView.snp.makeConstraints { make in
+            make.top.bottom.left.right.equalTo(self.view)
+        }
+        
     }
     
     /// Computes the item size based on current layout mode
@@ -137,7 +165,18 @@ public class ZZAPAssetSelectionBaseViewController: UIViewController {
         }
     }
     
-    
+    // MARK: - Update UI
+    @MainActor
+    public func updateContentInset(inset: UIEdgeInsets) {
+        collectionView.contentInset = inset
+        loadingIndicator.snp.updateConstraints { make in
+            make.centerX.equalTo(self.view.snp.centerX).offset(-(inset.right - inset.left)/2)
+            make.centerY.equalTo(self.view.snp.centerY).offset(-(inset.bottom - inset.top)/2)
+        }
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+    }
+
 }
 
 // MARK: - UICollectionViewDataSource
@@ -202,6 +241,7 @@ extension ZZAPAssetSelectionBaseViewController: ZZAPSelectableDelegate {
         }
     }
 }
+
 // MARK: - ZZAPAssetSelectionDelegate
 
 extension ZZAPAssetSelectionBaseViewController: ZZAPAssetCellBaseDelegate {

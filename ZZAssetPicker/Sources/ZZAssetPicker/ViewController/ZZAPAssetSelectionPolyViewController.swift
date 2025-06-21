@@ -25,6 +25,7 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        selectionController.addSelectableDelegate?(self)
         setupScrollView()
         setupPages()
         setupIndicator()
@@ -34,7 +35,7 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
     // MARK: - Setup Validation Rules
     private func setupValidationRules() {
         let durationRule = ZZAPDurationRule(maxDuration: 60)
-        let sizeRule = ZZAPResolutionRule.lessThan(width: 2000, height: 2000)
+        let sizeRule = ZZAPResolutionRule.greaterThan(width: 480, height: 960)
         let validatior = ZZAPAssetValidatorManager(rules: [durationRule, sizeRule])
         if let selectionController = selectionController as? ZZAPSelectionControllerCommon {
             selectionController.validationManager = validatior
@@ -51,7 +52,8 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
         scrollView.isScrollEnabled = true
 
         scrollView.snp.makeConstraints { make in
-            make.edges.equalTo(view.safeAreaLayoutGuide)
+            make.top.left.right.equalTo(view.safeAreaLayoutGuide)
+            make.bottom.equalTo(view.snp.bottom)
         }
     }
 
@@ -94,9 +96,7 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
         
         indicatorBar.snp.makeConstraints { make in
             make.left.right.bottom.equalTo(self.view)
-            make.height.equalTo(180)
         }
-        
     }
 
 
@@ -123,10 +123,26 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
         case .all:
             break
         }
-
         viewController.loadViewIfNeeded()
-        viewController.store = ZZAPAssetStore(fetchResult: PHAsset.fetchAssets(with: options))
+        viewController.updateContentInset(inset: UIEdgeInsets(top: 0, left: 0, bottom: indicatorBar.intrinsicContentSize.height, right: 0))
+
+        DispatchQueue.global().async {
+            let store = ZZAPAssetStore(fetchResult: PHAsset.fetchAssets(with: options))
+            DispatchQueue.main.async {
+                viewController.store = store
+            }
+        }
 
         return viewController
+    }
+}
+
+// MARK: - ZZAPSelectableDelegate
+
+extension ZZAPAssetSelectionPolyViewController: ZZAPSelectableDelegate {
+    public func selectable(_ selectable: any ZZAPSelectable, from sender: AnyObject?, didChangeSelection selectedAssets: [Int : any ZZAPAsset]) {
+        for subPage in pageViewControllers {
+            subPage.updateContentInset(inset: UIEdgeInsets(top: 0, left: 0, bottom: indicatorBar.intrinsicContentSize.height, right: 0))
+        }
     }
 }

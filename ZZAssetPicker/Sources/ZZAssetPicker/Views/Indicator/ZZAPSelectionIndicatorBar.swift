@@ -6,9 +6,7 @@
 //
 
 import UIKit
-
-
-import UIKit
+import SnapKit
 
 @objcMembers
 public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
@@ -21,6 +19,10 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
         didSet {
             selectionController?.addSelectableDelegate?(self)
         }
+    }
+    
+    public var isExpanded: Bool  {
+        selectionController?.selectedAssets.count ?? 0 > 0
     }
 
     private let blurView: UIVisualEffectView
@@ -80,6 +82,24 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    public override var intrinsicContentSize: CGSize {
+        let hasItems = (selectionController?.selectedAssets.count ?? 0) > 0
+        
+        var totalHeight: CGFloat = superview?.safeAreaInsets.bottom ?? 0
+        
+        totalHeight += 12
+        
+        if hasItems && isExpanded {
+            totalHeight += 96
+            totalHeight += 8
+        }
+        
+        totalHeight += 32
+        totalHeight += 8
+        
+        return CGSize(width: UIView.noIntrinsicMetric, height: totalHeight)
+    }
 
     private func setupUI() {
         layer.masksToBounds = true
@@ -96,7 +116,6 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
         }
 
-
         contentView.addSubview(collectionView)
         contentView.addSubview(buttonStackView)
 
@@ -109,21 +128,51 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
 
         collectionView.snp.makeConstraints { make in
             make.left.right.top.equalToSuperview().inset(12)
-            make.height.equalTo(96)
+            make.height.equalTo(isExpanded ? 96 : 0)
         }
 
         buttonStackView.snp.makeConstraints { make in
             make.right.equalToSuperview().inset(12)
-            make.bottom.equalToSuperview().inset(8)
             make.height.equalTo(32)
+            make.bottom.equalToSuperview().inset(8)
         }
 
         composeButton.addTarget(self, action: #selector(didTapCompose), for: .touchUpInside)
         nextButton.addTarget(self, action: #selector(didTapNext), for: .touchUpInside)
     }
+    
+    private func updateExpansionState(animated: Bool) {
+        let targetHeight: CGFloat = isExpanded ? 96 : 0
+
+        if animated {
+            self.collectionView.snp.updateConstraints { make in
+                make.height.equalTo(targetHeight)
+            }
+            self.invalidateIntrinsicContentSize()
+            
+            UIView.animate(
+                withDuration: 0.5,
+                delay: 0,
+                usingSpringWithDamping: 0.8,
+                initialSpringVelocity: 0.5,
+                options: [.curveEaseInOut],
+                animations: {
+                    self.superview?.layoutIfNeeded()
+                },
+                completion: nil
+            )
+        } else {
+            collectionView.snp.updateConstraints { make in
+                make.height.equalTo(targetHeight)
+            }
+            invalidateIntrinsicContentSize()
+        }
+    }
+
 
     public func reloadSelectionDisplay() {
         collectionView.reloadData()
+        updateExpansionState(animated: false)
     }
 
     @objc private func didTapNext() {
@@ -136,6 +185,7 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
 extension ZZAPSelectionIndicatorBar: ZZAPSelectableDelegate {
     public func selectable(_ selectable: any ZZAPSelectable, from sender: AnyObject?, didChangeSelection selectedAssets: [Int : any ZZAPAsset]) {
         collectionView.reloadData()
+        updateExpansionState(animated: true)
     }
 }
 
@@ -146,7 +196,6 @@ extension ZZAPSelectionIndicatorBar: ZZAPAssetCellBaseDelegate {
         selectionController?.removeAsset?(self, at: index)
     }
 }
-
 
 extension ZZAPSelectionIndicatorBar: UICollectionViewDataSource, UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

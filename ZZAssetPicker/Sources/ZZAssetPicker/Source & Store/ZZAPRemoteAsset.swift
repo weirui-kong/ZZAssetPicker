@@ -11,6 +11,9 @@ import UIKit
 
 @objc
 public class ZZAPRemoteAsset: NSObject, ZZAPAsset {
+    public func isEqual(to other: any ZZAPAsset) -> Bool {
+        id == other.id
+    }
     
     // MARK: - Properties
     

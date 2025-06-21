@@ -11,6 +11,9 @@ import UIKit
 
 @objc
 public class ZZAPPHAsset: NSObject, ZZAPAsset {
+    public func isEqual(to other: any ZZAPAsset) -> Bool {
+        id == other.id
+    }
     
     
     private let asset: PHAsset

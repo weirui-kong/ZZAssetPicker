@@ -46,5 +46,8 @@ public protocol ZZAPAsset: AnyObject {
     
     /// Cancel AVAsset request if any
     @objc optional func cancelAVAssetRequest(requestID: Int32)
+    
+    @objc func isEqual(to other: ZZAPAsset) -> Bool
+
 }
 

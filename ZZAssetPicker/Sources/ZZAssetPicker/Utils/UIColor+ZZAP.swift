@@ -9,7 +9,5 @@ import UIKit
 
 @objc
 extension UIColor {
-    public static var zzapThemeColor: UIColor {
-        UIColor(red: 233/255, green: 68/255, blue: 89/255, alpha: 1)
-    }
+    public static let zzapThemeColor: UIColor = UIColor(red: 233/255, green: 68/255, blue: 89/255, alpha: 1)
 }
