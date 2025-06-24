@@ -11,7 +11,7 @@
 
 @interface ViewController () <ZZAPAssetSelectionDelegate>
 
-@property (nonatomic, strong) ZZAPAssetSelectionPolyViewController *assetSelectionVC;
+@property (nonatomic, strong) ZZAssetPickerViewController *assetSelectionVC;
 
 @end
 
@@ -19,16 +19,25 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-
-    self.assetSelectionVC = [[ZZAPAssetSelectionPolyViewController alloc] init];
-
-    [self addChildViewController:self.assetSelectionVC];
-    self.assetSelectionVC.view.frame = self.view.bounds;
-    self.assetSelectionVC.view.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-
-    [self.view addSubview:self.assetSelectionVC.view];
-
-    [self.assetSelectionVC didMoveToParentViewController:self];
+    
+    ZZAssetPickerConfiguration *configuration = [[ZZAssetPickerConfiguration alloc] init];
+    
+    ZZAssetPickerUIElementsConfiguration *uiConfiguration = [[ZZAssetPickerUIElementsConfiguration alloc] init];
+    uiConfiguration.__unsafe_tabTypes = [[NSArray alloc] initWithObjects:@(ZZAPTabTypeAll), @(ZZAPTabTypeVideos), @(ZZAPTabTypePhotos), @(ZZAPTabTypeLivePhotos), nil];
+    configuration.uiElementsConfig = uiConfiguration;
+    
+    ZZAssetPickerSelectionConfiguration *selectoinConfiguration = [[ZZAssetPickerSelectionConfiguration alloc] init];
+    selectoinConfiguration.selectionMode = ZZAPSelectionModeMultipleCompact;
+    selectoinConfiguration.maximumSelection = 3;
+    configuration.selectionConfig = selectoinConfiguration;
+    
+    
+    ZZAssetPickerViewController *vc = [[ZZAssetPickerViewController alloc] initWithConfig:configuration];
+    vc.modalPresentationStyle = UIModalPresentationFullScreen;
+    
+    dispatch_async(dispatch_get_main_queue(), ^{
+        [self presentViewController:vc animated:YES completion:nil];
+    });
 }
 
 @end

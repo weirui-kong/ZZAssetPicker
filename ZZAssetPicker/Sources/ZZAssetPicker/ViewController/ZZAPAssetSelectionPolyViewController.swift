@@ -14,14 +14,24 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
 
     // MARK: - Properties
 
-    private var selectionController: ZZAPSelectable = ZZAPSelectionControllerCommon(selectionMode: .multipleCompact, maximumSelection: 5)
+    private var selectionController: ZZAPSelectable
 
-    private let tabTypes: [ZZAPTabType] = [.all, .videos, .photos, .livePhotos]
+    private var tabTypes: [ZZAPTabType]
     private let scrollView = UIScrollView()
-    private var pageViewControllers: [ZZAPAssetSelectionBaseViewController] = []
+    private var pageViewControllers: [ZZAPAssetSelectionBaseViewController]
 
     // MARK: - Lifecycle
-
+    init(tabTypes: [ZZAPTabType], selectionController: ZZAPSelectable, pageViewControllers: [ZZAPAssetSelectionBaseViewController]) {
+        self.tabTypes = tabTypes
+        self.selectionController = selectionController
+        self.pageViewControllers = pageViewControllers
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
