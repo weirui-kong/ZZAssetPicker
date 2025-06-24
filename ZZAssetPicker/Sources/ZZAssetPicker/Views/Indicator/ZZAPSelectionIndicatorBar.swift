@@ -33,13 +33,20 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
     private let nextButton: UIButton
 
     public override init(frame: CGRect) {
-        let blurEffect: UIBlurEffect
-        if #available(iOS 13.0, *) {
-            blurEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
+        if ZZAPDeviceSupport.supportsBlurEffect {
+            let blurEffect: UIBlurEffect
+            if #available(iOS 13.0, *) {
+                blurEffect = UIBlurEffect(style: .systemUltraThinMaterialDark)
+            } else {
+                blurEffect = UIBlurEffect(style: .regular)
+            }
+            blurView = UIVisualEffectView(effect: blurEffect)
         } else {
-            blurEffect = UIBlurEffect(style: .regular)
+            let fallbackView = UIVisualEffectView(effect: nil)
+            fallbackView.backgroundColor = UIColor.black.withAlphaComponent(0.87)
+            blurView = fallbackView
         }
-        blurView = UIVisualEffectView(effect: blurEffect)
+        
         contentView = UIView()
 
         let layout = UICollectionViewFlowLayout()
