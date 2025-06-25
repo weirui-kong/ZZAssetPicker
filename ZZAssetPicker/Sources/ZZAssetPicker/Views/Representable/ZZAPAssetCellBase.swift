@@ -46,6 +46,8 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
         }
     }
     
+    public var mediaSubtypeBadgeOption: ZZAPMediaSubtypeBadgeOption = .none
+    
     public var clearWhenPreparingForReuse: Bool = false
 
     /// Image view displaying the asset thumbnail
@@ -112,6 +114,7 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
         if clearWhenPreparingForReuse {
             imageView.image = nil
         }
+        self.mediaSubtypeBadgeOption = .none
     }
     
     

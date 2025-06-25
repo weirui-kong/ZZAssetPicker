@@ -10,5 +10,5 @@ import Foundation
 @objcMembers
 public class ZZAssetPickerConfiguration: NSObject {
     public var selectionConfig: ZZAssetPickerSelectionConfiguration = .init()
-    public var uiElementsConfig: ZZAssetPickerUIElementsConfiguration = .init()
+    public var userInterfaceConfig: ZZAssetPickerUserInterfaceConfiguration = .init()
 }

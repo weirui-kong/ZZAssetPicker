@@ -22,9 +22,11 @@
     
     ZZAssetPickerConfiguration *configuration = [[ZZAssetPickerConfiguration alloc] init];
     
-    ZZAssetPickerUIElementsConfiguration *uiConfiguration = [[ZZAssetPickerUIElementsConfiguration alloc] init];
-    uiConfiguration.__unsafe_tabTypes = [[NSArray alloc] initWithObjects:@(ZZAPTabTypeAll), @(ZZAPTabTypeVideos), @(ZZAPTabTypePhotos), @(ZZAPTabTypeLivePhotos), nil];
-    configuration.uiElementsConfig = uiConfiguration;
+    ZZAssetPickerUserInterfaceConfiguration *userInterfaceConfig = [[ZZAssetPickerUserInterfaceConfiguration alloc] init];
+    userInterfaceConfig.__unsafe_tabTypes = [[NSArray alloc] initWithObjects:@(ZZAPTabTypeAll), @(ZZAPTabTypeVideos), @(ZZAPTabTypePhotos), @(ZZAPTabTypeLivePhotos), nil];
+    userInterfaceConfig.mediaSubtypeBadgeOption = ZZAPMediaSubtypeBadgeOptionLivePhoto;
+    configuration.userInterfaceConfig = userInterfaceConfig;
+    
     
     ZZAssetPickerSelectionConfiguration *selectoinConfiguration = [[ZZAssetPickerSelectionConfiguration alloc] init];
     selectoinConfiguration.selectionMode = ZZAPSelectionModeMultipleCompact;

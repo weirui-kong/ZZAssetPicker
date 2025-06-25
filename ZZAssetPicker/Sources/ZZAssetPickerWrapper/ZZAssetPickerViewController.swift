@@ -15,15 +15,12 @@ public class ZZAssetPickerViewController: ZZAPAssetSelectionPolyViewController {
     @MainActor required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    public private(set) var config: ZZAssetPickerConfiguration
     
     public init(config: ZZAssetPickerConfiguration) {
-        self.config = config
-        
-        var tabTypes = config.uiElementsConfig.tabTypes
+        var tabTypes = config.userInterfaceConfig.tabTypes
         var selectionController = ZZAPSelectionControllerCommon(validationManager: nil, selectionMode: config.selectionConfig.selectionMode, maximumSelection: config.selectionConfig.maximumSelection)
         
-        super.init(tabTypes: tabTypes, selectionController: selectionController, pageViewControllers: [])
+        super.init(config: config, tabTypes: tabTypes, selectionController: selectionController, pageViewControllers: [])
     }
     
     public override func viewDidLoad() {

@@ -20,8 +20,12 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
     private let scrollView = UIScrollView()
     private var pageViewControllers: [ZZAPAssetSelectionBaseViewController]
 
+    public private(set) var config: ZZAssetPickerConfiguration
+    
     // MARK: - Lifecycle
-    init(tabTypes: [ZZAPTabType], selectionController: ZZAPSelectable, pageViewControllers: [ZZAPAssetSelectionBaseViewController]) {
+    
+    init(config: ZZAssetPickerConfiguration, tabTypes: [ZZAPTabType], selectionController: ZZAPSelectable, pageViewControllers: [ZZAPAssetSelectionBaseViewController]) {
+        self.config = config
         self.tabTypes = tabTypes
         self.selectionController = selectionController
         self.pageViewControllers = pageViewControllers
@@ -118,6 +122,7 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
         viewController.desiredItemWidth = 90
         viewController.itemSpacing = 2
         viewController.selectionController = self.selectionController
+        viewController.mediaSubtypeBadgeOption = self.config.userInterfaceConfig.mediaSubtypeBadgeOption
         let options = PHFetchOptions()
         options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
 

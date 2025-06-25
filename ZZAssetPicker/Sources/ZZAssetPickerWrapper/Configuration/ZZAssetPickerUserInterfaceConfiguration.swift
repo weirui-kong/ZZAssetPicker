@@ -1,5 +1,5 @@
 //
-//  ZZAssetPickerUIElementsConfiguration.swift
+//  ZZAssetPickerUserInterfaceConfiguration.swift
 //  ZZAssetPicker
 //
 //  Created by 孔维锐 on 6/25/25.
@@ -7,10 +7,23 @@
 
 import Foundation
 
+@objc
+public enum ZZAPMediaSubtypeBadgeOption: Int {
+    case none      = 0
+    case livePhoto = 1
+    
+    public static let all: Int = ZZAPMediaSubtypeBadgeOption.livePhoto.rawValue
+    
+    public func contains(option: ZZAPMediaSubtypeBadgeOption) -> Bool {
+        return (self.rawValue & option.rawValue) != 0
+    }
+}
+
 @objcMembers
-public class ZZAssetPickerUIElementsConfiguration: NSObject {
+public class ZZAssetPickerUserInterfaceConfiguration: NSObject {
 
     public var tabTypes: [ZZAPTabType] = []
+    public var mediaSubtypeBadgeOption: ZZAPMediaSubtypeBadgeOption = .none
 
     // OC-bridge
     @objc public var __unsafe_tabTypes: NSArray {
@@ -29,12 +42,13 @@ public class ZZAssetPickerUIElementsConfiguration: NSObject {
         super.init()
     }
 
-    public init(tabTypes: [ZZAPTabType]) {
+    public init(tabTypes: [ZZAPTabType], mediaSubtypeBadge: ZZAPMediaSubtypeBadgeOption) {
         self.tabTypes = tabTypes
+        self.mediaSubtypeBadgeOption = mediaSubtypeBadge
         super.init()
     }
 
-    @objc public init(tabTypes: NSArray) {
+    @objc public init(tabTypes: NSArray, mediaSubtypeBadge: ZZAPMediaSubtypeBadgeOption) {
         super.init()
         self.tabTypes = tabTypes.compactMap {
             if let number = $0 as? NSNumber {
@@ -42,5 +56,6 @@ public class ZZAssetPickerUIElementsConfiguration: NSObject {
             }
             return nil
         }
+        self.mediaSubtypeBadgeOption = mediaSubtypeBadge
     }
 }

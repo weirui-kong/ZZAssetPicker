@@ -35,6 +35,8 @@ public class ZZAPAssetSelectionBaseViewController: UIViewController {
     
     // MARK: - Public Configurable Properties
     
+    public var mediaSubtypeBadgeOption: ZZAPMediaSubtypeBadgeOption = .none
+
     public var store: ZZAPAssetStore? {
         didSet {
             self.collectionView?.reloadData()
@@ -203,6 +205,11 @@ extension ZZAPAssetSelectionBaseViewController: UICollectionViewDataSource {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: identifier, for: indexPath)
         
+        if let cellBase = cell as? ZZAPAssetCellBase {
+            cellBase.delegate = self
+            cellBase.mediaSubtypeBadgeOption = self.mediaSubtypeBadgeOption
+        }
+        
         if let assetRepresentable = cell as? ZZAPAssetRepresentable {
             assetRepresentable.clearWhenPreparingForReuse = asset.sourceType != .photoLibrary
             assetRepresentable.configure(with: asset)
@@ -212,9 +219,6 @@ extension ZZAPAssetSelectionBaseViewController: UICollectionViewDataSource {
                 .first ?? 0
         }
         
-        if let cellBase = cell as? ZZAPAssetCellBase {
-            cellBase.delegate = self
-        }
         return cell
     }
 }
