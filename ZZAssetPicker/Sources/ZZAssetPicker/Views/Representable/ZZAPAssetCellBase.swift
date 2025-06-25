@@ -127,14 +127,26 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
         let targetSize = CGSize(width: bounds.width * UIScreen.main.scale,
                                 height: bounds.height * UIScreen.main.scale)
         
-        self.requestID = asset.requestImage(targetSize: targetSize, completion: { [weak self] image in
-            guard let self = self else { return }
-            if self.asset?.id == asset.id {
-                DispatchQueue.main.async {
-                    self.imageView.image = image
+        if let opportunistic = asset.requestImageOpportunistically {
+            self.requestID = opportunistic(targetSize, { [weak self] image in
+                guard let self = self else { return }
+                if self.asset?.id == asset.id {
+                    DispatchQueue.main.async {
+                        self.imageView.image = image
+                    }
+                }
+            })
+        } else {
+            self.requestID = asset.requestImage(targetSize: targetSize) { [weak self] image in
+                guard let self = self else { return }
+                if self.asset?.id == asset.id {
+                    DispatchQueue.main.async {
+                        self.imageView.image = image
+                    }
                 }
             }
-        })
+        }
+
     }
     
     public func update(updateOption: ZZAPAssetCellUpdateOption) {
@@ -142,14 +154,25 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
             if let asset = asset {
                 let targetSize = CGSize(width: bounds.width * UIScreen.main.scale,
                                         height: bounds.height * UIScreen.main.scale)
-                self.requestID = asset.requestImage(targetSize: targetSize, completion: { [weak self] image in
-                    guard let self = self else { return }
-                    if self.asset?.id == asset.id {
-                        DispatchQueue.main.async {
-                            self.imageView.image = image
+                if let opportunistic = asset.requestImageOpportunistically {
+                    self.requestID = opportunistic(targetSize, { [weak self] image in
+                        guard let self = self else { return }
+                        if self.asset?.id == asset.id {
+                            DispatchQueue.main.async {
+                                self.imageView.image = image
+                            }
+                        }
+                    })
+                } else {
+                    self.requestID = asset.requestImage(targetSize: targetSize) { [weak self] image in
+                        guard let self = self else { return }
+                        if self.asset?.id == asset.id {
+                            DispatchQueue.main.async {
+                                self.imageView.image = image
+                            }
                         }
                     }
-                })
+                }
             }
         }
         

@@ -37,7 +37,8 @@ public protocol ZZAPAsset: AnyObject {
     
     /// Request image with target size and callback
     @objc func requestImage(targetSize: CGSize, completion: @escaping (UIImage?) -> Void) -> Int32
-    
+    @objc optional func requestImageOpportunistically(targetSize: CGSize, completion: @escaping (UIImage?) -> Void) -> Int32
+
     /// Cancel previous image request if any
     @objc func cancelImageRequest(requestID: Int32)
     

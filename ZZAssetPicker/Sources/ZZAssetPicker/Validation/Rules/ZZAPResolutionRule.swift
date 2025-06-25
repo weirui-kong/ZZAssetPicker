@@ -77,72 +77,88 @@ private enum ZZAPResolutionRuleType {
         switch ruleType {
         case let .greaterThan(w, h):
             if size.width < w || size.height < h {
-                return ZZAPAssetValidationFailure(code: "0x2001", message: "Resolution too small", extra: [
-                    "width": size.width,
-                    "height": size.height
-                ])
+                return ZZAPAssetValidationFailure(
+                    code: "0x2001",
+                    message: "Resolution too small: requires > \(w)x\(h), got \(Int(size.width))x\(Int(size.height))",
+                    extra: ["width": size.width, "height": size.height]
+                )
             }
 
         case let .lessThan(w, h):
             if size.width > w || size.height > h {
-                return ZZAPAssetValidationFailure(code: "0x2002", message: "Resolution too large", extra: [
-                    "width": size.width,
-                    "height": size.height
-                ])
+                return ZZAPAssetValidationFailure(
+                    code: "0x2002",
+                    message: "Resolution too large: requires < \(w)x\(h), got \(Int(size.width))x\(Int(size.height))",
+                    extra: ["width": size.width, "height": size.height]
+                )
             }
 
         case let .withinRange(minW, minH, maxW, maxH):
             if size.width < minW || size.width > maxW || size.height < minH || size.height > maxH {
-                return ZZAPAssetValidationFailure(code: "0x2003", message: "Resolution out of allowed range", extra: [
-                    "width": size.width,
-                    "height": size.height
-                ])
+                return ZZAPAssetValidationFailure(
+                    code: "0x2003",
+                    message: "Resolution out of allowed range: requires \(minW)–\(maxW)x\(minH)–\(maxH), got \(Int(size.width))x\(Int(size.height))",
+                    extra: ["width": size.width, "height": size.height]
+                )
             }
 
         case let .widthGreaterThan(minW):
             if size.width < minW {
-                return ZZAPAssetValidationFailure(code: "0x2004", message: "Width too small", extra: [
-                    "width": size.width
-                ])
+                return ZZAPAssetValidationFailure(
+                    code: "0x2004",
+                    message: "Width too small: requires > \(minW), got \(Int(size.width))",
+                    extra: ["width": size.width]
+                )
             }
 
         case let .widthLessThan(maxW):
             if size.width > maxW {
-                return ZZAPAssetValidationFailure(code: "0x2005", message: "Width too large", extra: [
-                    "width": size.width
-                ])
+                return ZZAPAssetValidationFailure(
+                    code: "0x2005",
+                    message: "Width too large: requires < \(maxW), got \(Int(size.width))",
+                    extra: ["width": size.width]
+                )
             }
 
         case let .widthInRange(min, max):
             if size.width < min || size.width > max {
-                return ZZAPAssetValidationFailure(code: "0x2006", message: "Width not in range", extra: [
-                    "width": size.width
-                ])
+                return ZZAPAssetValidationFailure(
+                    code: "0x2006",
+                    message: "Width not in range: requires \(min)–\(max), got \(Int(size.width))",
+                    extra: ["width": size.width]
+                )
             }
 
         case let .heightGreaterThan(minH):
             if size.height < minH {
-                return ZZAPAssetValidationFailure(code: "0x2007", message: "Height too small", extra: [
-                    "height": size.height
-                ])
+                return ZZAPAssetValidationFailure(
+                    code: "0x2007",
+                    message: "Height too small: requires > \(minH), got \(Int(size.height))",
+                    extra: ["height": size.height]
+                )
             }
 
         case let .heightLessThan(maxH):
             if size.height > maxH {
-                return ZZAPAssetValidationFailure(code: "0x2008", message: "Height too large", extra: [
-                    "height": size.height
-                ])
+                return ZZAPAssetValidationFailure(
+                    code: "0x2008",
+                    message: "Height too large: requires < \(maxH), got \(Int(size.height))",
+                    extra: ["height": size.height]
+                )
             }
 
         case let .heightInRange(min, max):
             if size.height < min || size.height > max {
-                return ZZAPAssetValidationFailure(code: "0x2009", message: "Height not in range", extra: [
-                    "height": size.height
-                ])
+                return ZZAPAssetValidationFailure(
+                    code: "0x2009",
+                    message: "Height not in range: requires \(min)–\(max), got \(Int(size.height))",
+                    extra: ["height": size.height]
+                )
             }
         }
 
         return nil
     }
+
 
 }

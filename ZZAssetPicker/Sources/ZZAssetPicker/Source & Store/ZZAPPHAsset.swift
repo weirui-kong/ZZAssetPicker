@@ -71,7 +71,7 @@ public class ZZAPPHAsset: NSObject, ZZAPAsset {
         
         let options = PHImageRequestOptions()
         options.isSynchronous = false
-        options.deliveryMode = .opportunistic
+        options.deliveryMode = .highQualityFormat
         options.resizeMode = .fast
 
         requestID = PHImageManager.default().requestImage(
@@ -91,6 +91,33 @@ public class ZZAPPHAsset: NSObject, ZZAPAsset {
         return requestID!
     }
 
+    public func requestImageOpportunistically(targetSize: CGSize, completion: @escaping (UIImage?) -> Void) -> Int32 {
+        if let cachedImage = cachedImage, cacheImage {
+            completion(cachedImage)
+            return 0
+        }
+        
+        let options = PHImageRequestOptions()
+        options.isSynchronous = false
+        options.deliveryMode = .opportunistic
+        options.resizeMode = .fast
+
+        requestID = PHImageManager.default().requestImage(
+            for: asset,
+            targetSize: targetSize,
+            contentMode: .aspectFill,
+            options: options
+        ) { image, _ in
+            self.cachedImage = self.cacheImage ? image : nil
+//            let delay = Double.random(in: 0...0.5)
+//            DispatchQueue.global().asyncAfter(deadline: .now() + delay) {
+//                completion(image)
+//            }
+            completion(image)
+        }
+
+        return requestID!
+    }
 
     public func cancelImageRequest(requestID: Int32) {
         PHImageManager.default().cancelImageRequest(requestID)
