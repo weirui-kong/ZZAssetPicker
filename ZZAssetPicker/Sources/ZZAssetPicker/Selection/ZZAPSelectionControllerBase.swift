@@ -39,9 +39,10 @@ import UIKit
     }
     
     @objc public func addAsset(_ sender: AnyObject? = nil, _ asset: ZZAPAsset, at index: Int) {
+        self.notifyDidStartSelectionValidatoin(from: sender, on: asset)
         // Max limit
         if selectedAssets.count >= maximumSelection {
-            notifySelectionFailed(from: sender, on: asset, failure: ZZAPAssetValidationFailure(
+            notifySelectionEnd(from: sender, on: asset, failure: ZZAPAssetValidationFailure(
                 code: "0x0000",
                 message: "Maximum selection reached."
             ))
@@ -49,14 +50,24 @@ import UIKit
         }
         
         // Validation check
-        if let validator = validationManager, let failure = validator.validate(asset: asset) {
-            notifySelectionFailed(from: sender, on: asset, failure: failure)
-            return
+        if let validator = validationManager {
+            validator.progressiveValidate(asset: asset) { [weak self] in
+                return self?.validationShouldStop(from: self, on: asset) ?? false
+            } progress: { [weak self] current, total in
+                self?.notifyDidValidate(from: self, on: asset, current: current, total: total)
+            } completion: { [weak self] failure in
+                if let failure = failure {
+                    DispatchQueue.main.async {
+                        self?.notifySelectionEnd(from: sender, on: asset, failure: failure)
+                    }
+                } else {
+                    self?.selectedAssets[index] = asset
+                    self?.targetingSelectionCursor = (self?.selectedAssets.keys.max() ?? 0) + 1
+                    self?.notifySelectionEnd(from: sender, on: asset, failure: nil)
+                    self?.notifySelectionChanged(from: sender)
+                }
+            }
         }
-        
-        selectedAssets[index] = asset
-        targetingSelectionCursor = (selectedAssets.keys.max() ?? 0) + 1
-        notifySelectionChanged(from: sender)
     }
     
     @objc public func removeAsset(_ sender: AnyObject? = nil, at index: Int) {
@@ -110,22 +121,77 @@ import UIKit
             ]
         )
     }
-    
+
     @MainActor
-    internal func notifySelectionFailed(from sender: AnyObject?, on asset: ZZAPAsset, failure: ZZAPAssetValidationFailure) {
+    internal func notifySelectionEnd(from sender: AnyObject?, on asset: ZZAPAsset, failure: ZZAPAssetValidationFailure?) {
         for delegate in delegates.allObjects {
             (delegate as? ZZAPSelectableDelegate)?
-                .selectable?(self, from: sender, didFailToSelect: asset, dueTo: failure)
+                .selectable?(self, from: sender, didEndSelectionValidatoin: asset, mayFail: failure)
         }
         NotificationCenter.default.post(
-            name: .ZZAPSelectionDidFail,
+            name: .ZZAPValidationDidEnd,
             object: self,
             userInfo: [
                 "sender": sender as Any,
                 "asset": asset,
-                "failure": failure
+                "failure": failure as Any
             ]
         )
     }
-    
+
+    @MainActor
+    internal func notifyDidStartSelectionValidatoin(from sender: AnyObject?, on asset: ZZAPAsset) {
+        for delegate in delegates.allObjects {
+            (delegate as? ZZAPSelectableDelegate)?
+                .selectable?(self, from: sender, didStartSelectionValidatoin: asset)
+        }
+        NotificationCenter.default.post(
+            name: .ZZAPValidationDidStart,
+            object: self,
+            userInfo: [
+                "sender": sender as Any,
+                "asset": asset
+            ]
+        )
+    }
+
+    @MainActor
+    internal func notifyDidValidate(from sender: AnyObject?, on asset: ZZAPAsset, current: Int, total: Int) {
+        for delegate in delegates.allObjects {
+            (delegate as? ZZAPSelectableDelegate)?
+                .selectable?(self, from: sender, didValidate: asset, current: current, total: total)
+        }
+        NotificationCenter.default.post(
+            name: .ZZAPValidationProgress,
+            object: self,
+            userInfo: [
+                "sender": sender as Any,
+                "asset": asset,
+                "current": current,
+                "total": total
+            ]
+        )
+    }
+
+    @MainActor
+    internal func validationShouldStop(from sender: AnyObject?, on asset: ZZAPAsset) -> Bool {
+        var shouldStop = false
+        for delegate in delegates.allObjects {
+            if let stop = (delegate as? ZZAPSelectableDelegate)?
+                .selectable?(self, from: sender, shouldStopValidating: asset),
+               stop {
+                shouldStop = true
+            }
+        }
+        NotificationCenter.default.post(
+            name: .ZZAPValidationShouldStop,
+            object: self,
+            userInfo: [
+                "sender": sender as Any,
+                "asset": asset,
+                "shouldStop": shouldStop
+            ]
+        )
+        return shouldStop
+    }
 }

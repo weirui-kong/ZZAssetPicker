@@ -75,7 +75,7 @@ import UIKit
             }
         }
         
-        _ = semaphore.wait(timeout: .now() + 2)
+        _ = semaphore.wait(timeout: .now() + 60)
 
         return validationFailure
     }

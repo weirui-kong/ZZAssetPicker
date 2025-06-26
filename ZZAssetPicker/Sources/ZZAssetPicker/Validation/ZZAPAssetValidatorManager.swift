@@ -38,4 +38,50 @@ import Photos
     @objc public func failureInfos(for asset: ZZAPAsset) -> [ZZAPAssetValidationFailure] {
         return rules.compactMap { $0.validate(asset: asset) }
     }
+    
+    /// Progressive validation with progress and cancellation support.
+    /// - Parameters:
+    ///   - asset: The asset to validate.
+    ///   - cancelFlag: A closure returning whether the operation should cancel.
+    ///   - progress: Called with current index and total count (runs on main thread).
+    ///   - completion: Called with the first failure or nil (runs on main thread).
+    @objc public func progressiveValidate(
+        asset: ZZAPAsset,
+        cancelFlag: @escaping () -> Bool,
+        progress: @escaping (_ current: Int, _ total: Int) -> Void,
+        completion: @escaping (_ failure: ZZAPAssetValidationFailure?) -> Void
+    ) {
+        let total = rules.count
+
+        let progressQueue = DispatchQueue(label: "com.zzap.assetValidation")
+
+        DispatchQueue.global(qos: .userInitiated).async { [rules] in
+            for (index, rule) in rules.enumerated() {
+                if cancelFlag() {
+                    DispatchQueue.main.async {
+                        completion(nil)
+                    }
+                    return
+                }
+
+                if let failure = rule.validate(asset: asset) {
+                    progressQueue.async {
+                        progress(index + 1, total)
+                    }
+                    DispatchQueue.main.async {
+                        completion(failure)
+                    }
+                    return
+                }
+
+                progressQueue.async {
+                    progress(index + 1, total)
+                }
+            }
+
+            DispatchQueue.main.async {
+                completion(nil)
+            }
+        }
+    }
 }

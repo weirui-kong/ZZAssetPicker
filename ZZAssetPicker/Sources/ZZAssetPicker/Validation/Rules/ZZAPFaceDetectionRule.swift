@@ -19,50 +19,45 @@ import UIKit
     }
 
     public func validate(asset: ZZAPAsset) -> ZZAPAssetValidationFailure? {
-        // Only check image assets
         guard asset.mediaType == .image else { return nil }
 
-        let semaphore = DispatchSemaphore(value: 0)
-        var validationFailure: ZZAPAssetValidationFailure?
-
-        let options = PHImageRequestOptions()
-        options.isSynchronous = false
-        options.deliveryMode = .highQualityFormat
-
-        asset.requestImage(targetSize: CGSize(width: 512, height: 512)) { image in
-            defer { semaphore.signal() }
-
-            guard let cgImage = image?.cgImage else {
-                validationFailure = ZZAPAssetValidationFailure(
-                    code: "0x2201",
-                    message: "Unable to load image for face detection"
-                )
-                return
-            }
-
-            let request = VNDetectFaceRectanglesRequest()
-            let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
-
-            do {
-                try handler.perform([request])
-                let foundFace = (request.results?.count ?? 0) > 0
-                if self.requireFace && !foundFace {
-                    validationFailure = ZZAPAssetValidationFailure(
-                        code: "0x2202",
-                        message: "No face detected in photo"
-                    )
-                }
-            } catch {
-                validationFailure = ZZAPAssetValidationFailure(
-                    code: "0x2203",
-                    message: "Face detection failed",
-                    extra: ["error": error.localizedDescription]
-                )
-            }
+        if Thread.isMainThread {
+            assertionFailure("Can't call validate synchronously on main thread")
+            return nil
         }
 
-        _ = semaphore.wait(timeout: .now() + 2)
+        let semaphore = DispatchSemaphore(value: 0)
+        var image: UIImage?
 
-        return validationFailure
+        asset.requestImage(targetSize: CGSize(width: 512, height: 512)) { result in
+            image = result
+            semaphore.signal()
+        }
+
+        _ = semaphore.wait(timeout: .now() + 30)
+
+        guard let cgImage = image?.cgImage else {
+            return ZZAPAssetValidationFailure(code: "0x2201", message: "Unable to load image")
+        }
+
+        let request = VNDetectFaceRectanglesRequest()
+        let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+
+        do {
+            try handler.perform([request])
+            let hasFace = (request.results?.count ?? 0) > 0
+            if requireFace && !hasFace {
+                return ZZAPAssetValidationFailure(code: "0x2202", message: "No face detected")
+            }
+        } catch {
+            return ZZAPAssetValidationFailure(
+                code: "0x2203",
+                message: "Face detection failed",
+                extra: ["error": error.localizedDescription]
+            )
+        }
+
+        return nil
     }
+
 }

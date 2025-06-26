@@ -82,6 +82,12 @@ public class ZZAPAssetSelectionBaseViewController: UIViewController {
         indicator.hidesWhenStopped = true
         return indicator
     }()
+    
+    // MARK: - Loading Blur
+
+    private var validationLoadingTask: DispatchWorkItem?
+    private var loadingOverlayView: UIView?
+
     // MARK: - Lifecycle
     
     public override func viewDidLoad() {
@@ -236,14 +242,69 @@ extension ZZAPAssetSelectionBaseViewController: ZZAPSelectableDelegate {
         }
     }
     
-    public func selectable(_ selectable: any ZZAPSelectable, from sender: AnyObject?, didFailToSelect asset: any ZZAPAsset, dueTo failure: ZZAPAssetValidationFailure) {
-        if let sender = sender, sender === self {
+    public func selectable(_ selectable: any ZZAPSelectable, from sender: AnyObject?, didStartSelectionValidatoin asset: any ZZAPAsset) {
+        guard let sender = sender, sender === self else { return }
+
+        let task = DispatchWorkItem { [weak self] in
+            self?.showValidationLoadingOverlay()
+        }
+        self.validationLoadingTask = task
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3, execute: task)
+    }
+
+    public func selectable(_ selectable: any ZZAPSelectable, from sender: AnyObject?, didEndSelectionValidatoin asset: any ZZAPAsset, mayFail failure: ZZAPAssetValidationFailure?) {
+        guard let sender = sender, sender === self else { return }
+
+        self.validationLoadingTask?.cancel()
+        self.validationLoadingTask = nil
+
+        self.hideValidationLoadingOverlay()
+
+        if let failure = failure {
             print(failure.message + ", triggered by me.")
             print(failure.extra)
-        } else {
-            //print(failure.message + ", not triggered by me.")
         }
     }
+
+}
+
+// MARK: - Loading Blur
+
+extension ZZAPAssetSelectionBaseViewController {
+    private func showValidationLoadingOverlay() {
+        guard loadingOverlayView == nil else { return }
+
+        let overlay = UIVisualEffectView(effect: UIBlurEffect(style: .light))
+        overlay.frame = self.view.bounds
+        overlay.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        overlay.alpha = 0.0
+        
+        let indicator = UIActivityIndicatorView(style: .gray)
+        indicator.center = overlay.contentView.center
+        indicator.startAnimating()
+        overlay.contentView.addSubview(indicator)
+        
+        self.view.addSubview(overlay)
+        self.loadingOverlayView = overlay
+
+        UIView.animate(withDuration: 0.25) {
+            overlay.alpha = 1.0
+        }
+    }
+
+    private func hideValidationLoadingOverlay() {
+        guard let overlay = self.loadingOverlayView else { return }
+
+        UIView.animate(withDuration: 0.25, animations: {
+            overlay.alpha = 0.0
+        }, completion: { _ in
+            overlay.removeFromSuperview()
+        })
+
+        self.loadingOverlayView = nil
+    }
+
 }
 
 // MARK: - ZZAPAssetSelectionDelegate
