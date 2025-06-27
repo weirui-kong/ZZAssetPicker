@@ -71,6 +71,10 @@ static inline id _Nullable ZZAPSafeValue(id _Nullable value) {
     selectoinConfiguration.requireQrCodes = NO;
     configuration.selectionConfig = selectoinConfiguration;
     
+    ZZAssetPickerValidationConfiguration *extraValidationConfig = [[ZZAssetPickerValidationConfiguration alloc] init];
+    extraValidationConfig.extraRules = [NSArray arrayWithObjects:[ZZAPDurationRule greaterThanWithDuration:1], nil];
+    configuration.extraValidationConfig = extraValidationConfig;
+    
     
     self.assetPicker = [[ZZAssetPickerViewController alloc] initWithConfig:configuration];
     self.assetPicker.modalPresentationStyle = UIModalPresentationFullScreen;
@@ -100,7 +104,7 @@ static inline id _Nullable ZZAPSafeValue(id _Nullable value) {
     ZZAPAssetValidationFailure *failure = ZZAPSafeValue(userInfo[@"failure"]);
     id sender = ZZAPSafeValue(userInfo[@"sender"]);
 
-    NSString *message = [NSString stringWithFormat:@"❌ Selection failed for asset: %@\nReason: %@\n\nFrom: %@",
+    NSString *message = [NSString stringWithFormat:failure ? @"❌ Selection failed for asset: %@\nReason: %@\n\nFrom: %@" : @"✅ Selection succeed for asset: %@\nReason: %@\n\nFrom: %@" ,
                          asset.id ?: @"(nil)", failure.message ?: @"(nil)", sender ?: @"(nil)"];
     ZZAP_RUN_ON_MAIN_ASYNC(^{
         [self.assetPicker.view makeToast:message];

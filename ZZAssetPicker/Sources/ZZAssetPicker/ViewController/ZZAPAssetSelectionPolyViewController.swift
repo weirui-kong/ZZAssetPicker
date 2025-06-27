@@ -149,4 +149,12 @@ extension ZZAPAssetSelectionPolyViewController: ZZAPSelectableDelegate {
             subPage.updateContentInset(inset: UIEdgeInsets(top: 0, left: 0, bottom: indicatorBar.intrinsicContentSize.height, right: 0))
         }
     }
+    
+    public func selectable(_ selectable: any ZZAPSelectable, from sender: AnyObject?, didStartSelectionValidatoin asset: any ZZAPAsset) {
+        self.view.isUserInteractionEnabled = false
+    }
+    
+    public func selectable(_ selectable: any ZZAPSelectable, from sender: AnyObject?, didEndSelectionValidatoin asset: any ZZAPAsset, mayFail failure: ZZAPAssetValidationFailure?) {
+        self.view.isUserInteractionEnabled = true
+    }
 }

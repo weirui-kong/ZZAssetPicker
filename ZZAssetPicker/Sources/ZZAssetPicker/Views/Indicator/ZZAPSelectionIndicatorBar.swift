@@ -67,6 +67,7 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
         composeButton.titleLabel?.font = .boldSystemFont(ofSize: 14)
         composeButton.layer.cornerRadius = 8
         composeButton.contentEdgeInsets = UIEdgeInsets(top: 6, left: 16, bottom: 6, right: 16)
+        
 
         nextButton = UIButton(type: .system)
         nextButton.setTitle("下一步", for: .normal)
@@ -146,6 +147,7 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
 
         composeButton.addTarget(self, action: #selector(didTapCompose), for: .touchUpInside)
         nextButton.addTarget(self, action: #selector(didTapNext), for: .touchUpInside)
+        updateButtonStyleIfNeeded()
     }
     
     private func updateExpansionState(animated: Bool) {
@@ -189,8 +191,17 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
     }
 }
 
+extension ZZAPSelectionIndicatorBar {
+    func updateButtonStyleIfNeeded() {
+        self.nextButton.isEnabled = !(selectionController?.selectedAssets.isEmpty ?? true)
+        self.nextButton.alpha = (selectionController?.selectedAssets.isEmpty ?? true) ? 0.6 : 1
+        self.composeButton.isEnabled = !(selectionController?.selectedAssets.isEmpty ?? true)
+        self.composeButton.alpha = (selectionController?.selectedAssets.isEmpty ?? true) ? 0.6 : 1
+    }
+}
 extension ZZAPSelectionIndicatorBar: ZZAPSelectableDelegate {
     public func selectable(_ selectable: any ZZAPSelectable, from sender: AnyObject?, didChangeSelection selectedAssets: [Int : any ZZAPAsset]) {
+        updateButtonStyleIfNeeded()
         collectionView.reloadData()
         updateExpansionState(animated: true)
     }

@@ -31,6 +31,7 @@ public class ZZAssetPickerViewController: ZZAPAssetSelectionPolyViewController {
         if config.selectionConfig.requireQrCodes {
             rules.append(ZZAPQRCodeDetectionRule(requireQRCode: true))
         }
+        rules += config.extraValidationConfig.extraRules
         let validationManager = ZZAPAssetValidatorManager(rules: rules)
         var selectionController = ZZAPSelectionControllerCommon(validationManager: validationManager, selectionMode: config.selectionConfig.selectionMode, maximumSelection: config.selectionConfig.maximumSelection)
         
