@@ -20,6 +20,7 @@ import UIKit
 
     /// Thumbnail image (optional, for transition animation)
     var thumbnailImage: UIImage? { get }
+    var thumbnailImageQuality: ZZAPThumbnailImageQuality { get set }
 
     /// Set this to true to clear the image when preparing the cell for reuse,
     /// which helps avoid leftover images during cell reuse.

@@ -74,6 +74,8 @@ public class ZZAPAssetSelectionBaseViewController: UIViewController {
         }
     }
     
+    public var thumbnailImageQuality: ZZAPThumbnailImageQuality = .device
+
     // MARK: - Internal State
     
     private var collectionView: UICollectionView!
@@ -217,6 +219,7 @@ extension ZZAPAssetSelectionBaseViewController: UICollectionViewDataSource {
         }
         
         if let assetRepresentable = cell as? ZZAPAssetRepresentable {
+            assetRepresentable.thumbnailImageQuality = thumbnailImageQuality
             assetRepresentable.clearWhenPreparingForReuse = asset.sourceType != .photoLibrary
             assetRepresentable.configure(with: asset)
             assetRepresentable.selectionMode = self.selectionController?.selectionMode ?? .none

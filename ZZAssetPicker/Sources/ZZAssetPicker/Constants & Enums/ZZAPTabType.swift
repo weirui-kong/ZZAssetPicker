@@ -21,4 +21,21 @@ import Foundation
     
     /// Shows only Live Photos.
     case livePhotos = 3
+    
+}
+
+extension ZZAPTabType {
+    /// Returns a string representation for each tab type.
+    public var stringValue: String {
+        switch self {
+        case .all:
+            return "All"
+        case .videos:
+            return "Videos"
+        case .photos:
+            return "Photos"
+        case .livePhotos:
+            return "LivePhotos"
+        }
+    }
 }

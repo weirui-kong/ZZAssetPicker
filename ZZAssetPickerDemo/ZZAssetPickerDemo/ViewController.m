@@ -55,6 +55,10 @@ static inline id _Nullable ZZAPSafeValue(id _Nullable value) {
     
     ZZAssetPickerConfiguration *configuration = [[ZZAssetPickerConfiguration alloc] init];
     
+    ZZAssetPickerResourceConfiguration *resourceConfig = [ZZAssetPickerResourceConfiguration.alloc init];
+    resourceConfig.thumbnailQuality = ZZAPThumbnailImageQualityDevice;
+    configuration.resourceConfig = resourceConfig;
+    
     ZZAssetPickerUserInterfaceConfiguration *userInterfaceConfig = [[ZZAssetPickerUserInterfaceConfiguration alloc] init];
     userInterfaceConfig.__unsafe_tabTypes = [[NSArray alloc] initWithObjects:@(ZZAPTabTypeAll), @(ZZAPTabTypeVideos), @(ZZAPTabTypePhotos), @(ZZAPTabTypeLivePhotos), nil];
     userInterfaceConfig.mediaSubtypeBadgeOption = ZZAPMediaSubtypeBadgeOptionLivePhoto;

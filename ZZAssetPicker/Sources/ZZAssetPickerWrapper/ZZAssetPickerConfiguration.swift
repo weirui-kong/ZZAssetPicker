@@ -9,6 +9,7 @@ import Foundation
 
 @objcMembers
 public class ZZAssetPickerConfiguration: NSObject {
+    public var resourceConfig: ZZAssetPickerResourceConfiguration = .init()
     public var selectionConfig: ZZAssetPickerSelectionConfiguration = .init()
     public var userInterfaceConfig: ZZAssetPickerUserInterfaceConfiguration = .init()
     public var extraValidationConfig: ZZAssetPickerValidationConfiguration = .init()

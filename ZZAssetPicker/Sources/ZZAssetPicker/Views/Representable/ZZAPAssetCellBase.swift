@@ -19,6 +19,7 @@ public protocol ZZAPAssetCellBaseDelegate: AnyObject {
 @objcMembers
 public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZAPSelectionBadgeViewDelegate {
     
+    
     // MARK: - Properties
     
     public weak var delegate: ZZAPAssetCellBaseDelegate?
@@ -124,8 +125,8 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
     /// - Parameter asset: The asset to display
     public func configure(with asset: ZZAPAsset) {
         self.asset = asset
-        let targetSize = CGSize(width: bounds.width * UIScreen.main.scale,
-                                height: bounds.height * UIScreen.main.scale)
+        let targetSize = CGSize(width: bounds.width * self.thumbnailImageQuality.scale,
+                                height: bounds.height * self.thumbnailImageQuality.scale)
         
         if let opportunistic = asset.requestImageOpportunistically {
             self.requestID = opportunistic(targetSize, { [weak self] image in
@@ -152,8 +153,8 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
     public func update(updateOption: ZZAPAssetCellUpdateOption) {
         if updateOption.contains(option: .thumbnail) {
             if let asset = asset {
-                let targetSize = CGSize(width: bounds.width * UIScreen.main.scale,
-                                        height: bounds.height * UIScreen.main.scale)
+                let targetSize = CGSize(width: bounds.width * self.thumbnailImageQuality.scale,
+                                        height: bounds.height * self.thumbnailImageQuality.scale)
                 if let opportunistic = asset.requestImageOpportunistically {
                     self.requestID = opportunistic(targetSize, { [weak self] image in
                         guard let self = self else { return }
@@ -188,6 +189,8 @@ public class ZZAPAssetCellBase: UICollectionViewCell, ZZAPAssetRepresentable, ZZ
         return imageView.image
     }
     
+    public var thumbnailImageQuality: ZZAPThumbnailImageQuality = .device
+
     /// Returns the frame of the imageView relative to the window
     public var contentFrameInWindow: CGRect {
         return imageView.superview?.convert(imageView.frame, to: nil) ?? .zero
