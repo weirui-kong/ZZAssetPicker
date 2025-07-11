@@ -25,17 +25,17 @@ import Foundation
 }
 
 extension ZZAPTabType {
-    /// Returns a string representation for each tab type.
+    /// Returns a localized string representation for each tab type.
     public var stringValue: String {
         switch self {
         case .all:
-            return "All"
+            return ZZAPLocalized("zzap_tab_type_all")
         case .videos:
-            return "Videos"
+            return ZZAPLocalized("zzap_tab_type_videos")
         case .photos:
-            return "Photos"
+            return ZZAPLocalized("zzap_tab_type_photos")
         case .livePhotos:
-            return "LivePhotos"
+            return ZZAPLocalized("zzap_tab_type_livePhotos")
         }
     }
 }

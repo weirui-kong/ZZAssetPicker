@@ -20,7 +20,10 @@ let package = Package(
         .target(
             name: "ZZAssetPicker",
             dependencies: ["SnapKit"],
-            path: "Sources"
+            path: "Sources",
+            resources: [
+                .process("Localization/Resources")
+            ]
         ),
         .testTarget(
             name: "ZZAssetPickerTests",

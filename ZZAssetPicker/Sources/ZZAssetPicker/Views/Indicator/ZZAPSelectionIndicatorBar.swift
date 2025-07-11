@@ -61,7 +61,7 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
         collectionView.contentInset = UIEdgeInsets(top: kZZAPSelectionShapeBadgeViewRadius, left: kZZAPSelectionShapeBadgeViewRadius, bottom: kZZAPSelectionShapeBadgeViewRadius, right: kZZAPSelectionShapeBadgeViewRadius)
 
         composeButton = UIButton(type: .system)
-        composeButton.setTitle("一键成片", for: .normal)
+        composeButton.setTitle(ZZAPLocalized("zzap_selection_indicator_btn_title_oneclip"), for: .normal)
         composeButton.setTitleColor(.white, for: .normal)
         composeButton.backgroundColor = .zzapThemeColor
         composeButton.titleLabel?.font = .boldSystemFont(ofSize: 14)
@@ -70,7 +70,7 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
         
 
         nextButton = UIButton(type: .system)
-        nextButton.setTitle("下一步", for: .normal)
+        nextButton.setTitle(ZZAPLocalized("zzap_selection_indicator_btn_title_next"), for: .normal)
         nextButton.setTitleColor(.white, for: .normal)
         nextButton.backgroundColor = .zzapThemeColor
         nextButton.titleLabel?.font = .boldSystemFont(ofSize: 14)
