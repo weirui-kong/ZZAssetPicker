@@ -76,10 +76,12 @@ public class ZZAPSelectionIndexBadgeView: UIView, ZZAPSelectionBadgeViewProtocol
         outerCircle.snp.makeConstraints { $0.edges.equalToSuperview() }
         outerCircle.layer.borderWidth = 1.75
         outerCircle.layer.borderColor = UIColor.white.cgColor
-        outerCircle.layer.shadowColor = UIColor.black.cgColor
-        outerCircle.layer.shadowOpacity = 0.15
-        outerCircle.layer.shadowOffset = CGSize(width: 0, height: 1)
-        outerCircle.layer.shadowRadius = 2
+        if ZZAPDeviceSupport.supportsBadgeShadow {
+            outerCircle.layer.shadowColor = UIColor.black.cgColor
+            outerCircle.layer.shadowOpacity = 0.15
+            outerCircle.layer.shadowOffset = CGSize(width: 0, height: 1)
+            outerCircle.layer.shadowRadius = 2
+        }
         outerCircle.backgroundColor = .white.withAlphaComponent(0.2)
     }
     

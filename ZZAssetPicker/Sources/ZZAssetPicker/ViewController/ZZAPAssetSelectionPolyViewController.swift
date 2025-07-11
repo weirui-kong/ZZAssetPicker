@@ -48,6 +48,7 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
 
         // If collections is empty, fetch system albums
         if collections.isEmpty {
+            fetchQuickDefaultCollection()
             fetchSystemCollections()
         }
     }
@@ -125,33 +126,44 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
     }
 
     // MARK: - Fetch System Collections
-    private func fetchSystemCollections() {
-        let currentTabTypes = tabTypes
+    private func fetchQuickDefaultCollection() {
+        // assetCollectionType = .smartAlbum (2), subtype = 209
+        // Which is almost equal to `all photos`
+        let quickAlbums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: PHAssetCollectionSubtype(rawValue: 209) ?? .any, options: nil)
+        var defaultCollection: PHAssetCollection? = nil
+        quickAlbums.enumerateObjects { (collection, _, stop) in
+            defaultCollection = collection
+            stop.pointee = true
+        }
 
+        if let defaultCollection = defaultCollection {
+            self.collections = [defaultCollection]
+            self.updateCollections(newCollections: [defaultCollection])
+        }
+    }
+
+    private func fetchSystemCollections() {
         DispatchQueue.global().async { [weak self] in
-            let smartAlbums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
+            guard let self = self else { return }
+
             var collections: [PHAssetCollection] = []
+
+            let smartAlbums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
             smartAlbums.enumerateObjects { (collection, _, _) in
                 collections.append(collection)
             }
-            // Optionally, fetch user albums as well
+
             let userAlbums = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
             userAlbums.enumerateObjects { (collection, _, _) in
                 collections.append(collection)
             }
-            // Find the collection with the most assets (do not sort, just find max)
-            let maxCollection = collections.max(by: { (lhs, rhs) in
-                let lhsCount = PHAsset.fetchAssets(in: lhs, options: nil).count
-                let rhsCount = PHAsset.fetchAssets(in: rhs, options: nil).count
-                return lhsCount < rhsCount
-            })
-            let defaultCollections: [PHAssetCollection?] = currentTabTypes.map { _ in maxCollection }
+            
             DispatchQueue.main.async {
-                self?.collections = collections
-                self?.updateCollections(newCollections: defaultCollections)
+                self.collections = collections
             }
         }
     }
+
 
     // MARK: - Update Collections and Set Data Source
     public func updateCollections(newCollections: [PHAssetCollection?]) {

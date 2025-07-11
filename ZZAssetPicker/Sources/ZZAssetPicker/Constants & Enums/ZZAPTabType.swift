@@ -9,7 +9,7 @@ import Foundation
 
 /// Enum representing different types of media tabs in the album UI.
 /// Defines which media types are shown or selectable in a given tab.
-@objc public enum ZZAPTabType: Int {
+@objc public enum ZZAPTabType: Int, ZZAPLocalizable {
     /// Shows all media types (videos, photos,  etc.)
     case all = 0
     
@@ -26,7 +26,7 @@ import Foundation
 
 extension ZZAPTabType {
     /// Returns a localized string representation for each tab type.
-    public var stringValue: String {
+    public var localizationKey: String {
         switch self {
         case .all:
             return ZZAPLocalized("zzap_tab_type_all")

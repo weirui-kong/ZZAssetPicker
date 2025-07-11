@@ -41,5 +41,4 @@ public class ZZAssetPickerViewController: ZZAPAssetSelectionPolyViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
     }
-    
 }

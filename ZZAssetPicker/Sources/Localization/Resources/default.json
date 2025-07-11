@@ -2,7 +2,17 @@
     "zzap_selection_indicator_btn_title_next": "Next",
     "zzap_selection_indicator_btn_title_oneclip": "One Clip",
     "zzap_tab_type_all": "All",
+    
     "zzap_tab_type_videos": "Videos",
     "zzap_tab_type_photos": "Photos",
-    "zzap_tab_type_livePhotos": "Live Photos"
+    "zzap_tab_type_livePhotos": "Live Photos",
+    
+    "zzap_thumbnail_image_quality_low": "Low",
+    "zzap_thumbnail_image_quality_medium": "Medium",
+    "zzap_thumbnail_image_quality_high": "High",
+    "zzap_thumbnail_image_quality_device_scale": "Device Scale",
+    
+    "zzap_sort_creation_date_asc": "Creation Date ↑",
+    "zzap_sort_creation_date_desc": "Creation Date ↓",
+    
 }

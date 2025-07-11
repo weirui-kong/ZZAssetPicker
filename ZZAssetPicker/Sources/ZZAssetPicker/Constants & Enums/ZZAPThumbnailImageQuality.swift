@@ -8,14 +8,14 @@
 import Foundation
 import UIKit
 
-@MainActor
 @objc
-public enum ZZAPThumbnailImageQuality: Int {
+public enum ZZAPThumbnailImageQuality: Int, ZZAPLocalizable {
     case low = 1     // Scale = 1.0
     case medium = 2  // Scale = 2.0
     case high = 3    // Scale = 3.0
     case device = 0  // Use UIScreen.main.scale
 
+    @MainActor
     public var scale: CGFloat {
         switch self {
         case .low: return 1.0
@@ -25,12 +25,12 @@ public enum ZZAPThumbnailImageQuality: Int {
         }
     }
 
-    public var description: String {
+    public var localizationKey: String {
         switch self {
-        case .low: return "Low"
-        case .medium: return "Medium"
-        case .high: return "High"
-        case .device: return "Device"
+        case .low: return "zzap_thumbnail_image_quality_low"
+        case .medium: return "zzap_thumbnail_image_quality_medium"
+        case .high: return "zzap_thumbnail_image_quality_high"
+        case .device: return "zzap_thumbnail_image_quality_device_scale"
         }
     }
 }

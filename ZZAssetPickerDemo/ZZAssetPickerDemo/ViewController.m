@@ -56,7 +56,7 @@ static inline id _Nullable ZZAPSafeValue(id _Nullable value) {
     ZZAssetPickerConfiguration *configuration = [[ZZAssetPickerConfiguration alloc] init];
     
     ZZAssetPickerResourceConfiguration *resourceConfig = [ZZAssetPickerResourceConfiguration.alloc init];
-    resourceConfig.thumbnailQuality = ZZAPThumbnailImageQualityDevice;
+    resourceConfig.thumbnailQuality = ZZAPThumbnailImageQualityMedium;
     configuration.resourceConfig = resourceConfig;
     
     ZZAssetPickerUserInterfaceConfiguration *userInterfaceConfig = [[ZZAssetPickerUserInterfaceConfiguration alloc] init];
