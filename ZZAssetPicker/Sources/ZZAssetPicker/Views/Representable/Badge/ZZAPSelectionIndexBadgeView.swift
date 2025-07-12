@@ -8,7 +8,7 @@
 import UIKit
 import SnapKit
 
-public let kZZAPSelectionIndexBadgeViewRadius: CGFloat = 12.0
+public let kZZAPSelectionIndexBadgeViewRadius: CGFloat = 11.0
 
 @objcMembers
 public class ZZAPSelectionIndexBadgeView: UIView, ZZAPSelectionBadgeViewProtocol {
@@ -74,7 +74,7 @@ public class ZZAPSelectionIndexBadgeView: UIView, ZZAPSelectionBadgeViewProtocol
     private func setupOuterCircle() {
         addSubview(outerCircle)
         outerCircle.snp.makeConstraints { $0.edges.equalToSuperview() }
-        outerCircle.layer.borderWidth = 1.75
+        outerCircle.layer.borderWidth = 1.25
         outerCircle.layer.borderColor = UIColor.white.cgColor
         if ZZAPDeviceSupport.supportsBadgeShadow {
             outerCircle.layer.shadowColor = UIColor.black.cgColor
@@ -82,7 +82,7 @@ public class ZZAPSelectionIndexBadgeView: UIView, ZZAPSelectionBadgeViewProtocol
             outerCircle.layer.shadowOffset = CGSize(width: 0, height: 1)
             outerCircle.layer.shadowRadius = 2
         }
-        outerCircle.backgroundColor = .white.withAlphaComponent(0.2)
+        outerCircle.backgroundColor = .gray.withAlphaComponent(0.2)
     }
     
     /// Setup the inner circle with default background color

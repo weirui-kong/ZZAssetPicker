@@ -16,9 +16,13 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
 
     private var selectionController: ZZAPSelectable
 
-    private var tabTypes: [ZZAPTabType]
     private var collections: [PHAssetCollection?] = []
+
+    private var tabTypes: [ZZAPTabType]
+    private let tabView = ZZAPTabView()
     private let scrollView = UIScrollView()
+    private var coordinator: ZZAPScrollCoordinator?
+
     private var pageViewControllers: [ZZAPAssetSelectionBaseViewController]
 
     public private(set) var config: ZZAssetPickerConfiguration
@@ -42,19 +46,47 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         selectionController.addSelectableDelegate?(self)
+        setupTabView()
         setupScrollView()
         setupPages()
         setupIndicator()
-
+        setupCoordinator()
         // If collections is empty, fetch system albums
         if collections.isEmpty {
             fetchQuickDefaultCollection()
             fetchSystemCollections()
         }
     }
+    
+    private var didPlaceTabViewIndicator = false
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if !didPlaceTabViewIndicator {
+            tabView.layoutIfNeeded()
+            tabView.setSelectedIndex(tabView.selectedIndex, animated: false)
+            didPlaceTabViewIndicator.toggle()
+        }
+    }
+    
+    public override func viewWillAppear(_ animated: Bool) {
+        coordinator?.selectTab(at: coordinator?.tabView?.selectedIndex ?? 0, animated: false)
+    }
+    public override func viewDidAppear(_ animated: Bool) {
+        //coordinator?.selectTab(at: coordinator?.tabView?.selectedIndex ?? 0, animated: false)
+    }
 
+    // MARK: - Setup Tab View
+    private func setupTabView() {
+        view.addSubview(tabView)
+        tabView.setupTabs(tabs: self.tabTypes)
+        tabView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.left.right.equalToSuperview()
+            make.height.equalTo(44)
+        }
+    }
+    
     // MARK: - Setup Scroll View
-
     private func setupScrollView() {
         view.addSubview(scrollView)
         scrollView.isPagingEnabled = true
@@ -62,12 +94,24 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
         scrollView.bounces = false
         scrollView.isScrollEnabled = true
 
-        scrollView.snp.makeConstraints { make in
-            make.top.left.right.equalTo(view.safeAreaLayoutGuide)
-            make.bottom.equalTo(view.snp.bottom)
+        if view.subviews.contains(tabView) {
+            scrollView.snp.makeConstraints { make in
+                make.top.equalTo(tabView.snp.bottom)
+                make.left.right.bottom.equalTo(view)
+            }
+        } else {
+            scrollView.snp.makeConstraints { make in
+                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+                make.left.right.bottom.equalTo(view)
+            }
         }
     }
-
+    
+    // MARK: - Setup Coordinator
+    private func setupCoordinator() {
+        coordinator = ZZAPScrollCoordinator(tabView: tabView, scrollView: scrollView)
+    }
+    
     // MARK: - Setup Pages
 
     private func setupPages() {
