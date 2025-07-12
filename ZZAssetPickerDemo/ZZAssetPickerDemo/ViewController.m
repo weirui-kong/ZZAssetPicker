@@ -18,6 +18,7 @@ static inline id _Nullable ZZAPSafeValue(id _Nullable value) {
 @interface ViewController () <ZZAPAssetSelectionDelegate>
 
 @property (nonatomic, strong) ZZAssetPickerViewController *assetPicker;
+@property (nonatomic, assign) BOOL toastEnabled;
 
 @end
 
@@ -67,11 +68,11 @@ static inline id _Nullable ZZAPSafeValue(id _Nullable value) {
     
     ZZAssetPickerSelectionConfiguration *selectoinConfiguration = [[ZZAssetPickerSelectionConfiguration alloc] init];
     selectoinConfiguration.selectionMode = ZZAPSelectionModeMultipleCompact;
-    selectoinConfiguration.maximumSelection = 3;
+    selectoinConfiguration.maximumSelection = 99;
     selectoinConfiguration.minimumSize = CGSizeMake(720, 1280);
     selectoinConfiguration.minimumDuration = 3;
     selectoinConfiguration.maximumDuration = 60;
-    selectoinConfiguration.requireFaces = YES;
+    selectoinConfiguration.requireFaces = NO;
     selectoinConfiguration.requireQrCodes = NO;
     configuration.selectionConfig = selectoinConfiguration;
     
@@ -97,7 +98,9 @@ static inline id _Nullable ZZAPSafeValue(id _Nullable value) {
     NSString *message = [NSString stringWithFormat:@"✅ Selection changed from: %@\nSelected Assets Count: %lu",
                          sender ?: @"(null)", (unsigned long)selectedAssets.count];
     ZZAP_RUN_ON_MAIN_ASYNC(^{
-        [self.assetPicker.view makeToast:message];
+        if (self.toastEnabled) {
+            [self.assetPicker.view makeToast:message];
+        }
     });
 }
 
@@ -111,7 +114,9 @@ static inline id _Nullable ZZAPSafeValue(id _Nullable value) {
     NSString *message = [NSString stringWithFormat:failure ? @"❌ Selection failed for asset: %@\nReason: %@\n\nFrom: %@" : @"✅ Selection succeed for asset: %@\nReason: %@\n\nFrom: %@" ,
                          asset.id ?: @"(nil)", failure.message ?: @"(nil)", sender ?: @"(nil)"];
     ZZAP_RUN_ON_MAIN_ASYNC(^{
-        [self.assetPicker.view makeToast:message];
+        if (self.toastEnabled) {
+            [self.assetPicker.view makeToast:message];
+        }
     });
 }
 
@@ -124,7 +129,9 @@ static inline id _Nullable ZZAPSafeValue(id _Nullable value) {
     NSString *message = [NSString stringWithFormat:@"🟢 Validation started for asset: %@\nFrom: %@",
                          asset.id ?: @"(nil)", sender ?: @"(nil)"];
     ZZAP_RUN_ON_MAIN_ASYNC(^{
-        [self.assetPicker.view makeToast:message];
+        if (self.toastEnabled) {
+            [self.assetPicker.view makeToast:message];
+        }
     });
 }
 
@@ -141,7 +148,9 @@ static inline id _Nullable ZZAPSafeValue(id _Nullable value) {
                          (long)[current integerValue], (long)[total integerValue],
                          sender ?: @"(nil)"];
     ZZAP_RUN_ON_MAIN_ASYNC(^{
-        [self.assetPicker.view makeToast:message];
+        if (self.toastEnabled) {
+            [self.assetPicker.view makeToast:message];
+        }
     });
 }
 
@@ -157,7 +166,9 @@ static inline id _Nullable ZZAPSafeValue(id _Nullable value) {
                          [shouldStop boolValue] ? @"YES" : @"NO",
                          sender ?: @"(nil)"];
     ZZAP_RUN_ON_MAIN_ASYNC(^{
-        [self.assetPicker.view makeToast:message];
+        if (self.toastEnabled) {
+            [self.assetPicker.view makeToast:message];
+        }
     });
 }
 

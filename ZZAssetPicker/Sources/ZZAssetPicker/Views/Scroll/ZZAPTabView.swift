@@ -166,9 +166,9 @@ class ZZAPTabView: UIView {
         UIView.animate(withDuration: 0.25, delay: 0, options: [.curveEaseInOut]) {
             self.indicator.frame = CGRect(
                 x: indicatorX,
-                y: self.bounds.height - self.indicatorHeight,
+                y: self.bounds.height - self.indicatorHeight - 2,
                 width: interpolatedWidth,
-                height: self.indicatorHeight
+                height: self.indicatorHeight + 1
             )
         }
 

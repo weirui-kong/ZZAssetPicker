@@ -12,6 +12,7 @@ import SnapKit
 public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
 
     public weak var delegate: ZZAPSelectableDelegate?
+    
     public var selectionController: ZZAPSelectable? {
         willSet {
             selectionController?.removeSelectableDelegate?(self)
@@ -21,6 +22,8 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
         }
     }
     
+    private var previouslySelectedAssets = [ZZAPAsset]()
+
     public var isExpanded: Bool  {
         selectionController?.selectedAssets.count ?? 0 > 0
     }
@@ -202,8 +205,48 @@ extension ZZAPSelectionIndicatorBar {
 extension ZZAPSelectionIndicatorBar: ZZAPSelectableDelegate {
     public func selectable(_ selectable: any ZZAPSelectable, from sender: AnyObject?, didChangeSelection selectedAssets: [Int : any ZZAPAsset]) {
         updateButtonStyleIfNeeded()
-        collectionView.reloadData()
+        
+        let currentAssets = selectionController?.orderedSelectedAssets ?? []
+        applySelectionDiff(old: previouslySelectedAssets, new: currentAssets)
+        previouslySelectedAssets = currentAssets
+        
         updateExpansionState(animated: true)
+    }
+    
+    private func applySelectionDiff(old: [any ZZAPAsset], new: [any ZZAPAsset]) {
+        let oldIdIndexMap = Dictionary(uniqueKeysWithValues: old.enumerated().map { ($1.id, $0) })
+        let newIdIndexMap = Dictionary(uniqueKeysWithValues: new.enumerated().map { ($1.id, $0) })
+        
+        var toDelete: [IndexPath] = []
+        var toInsert: [IndexPath] = []
+        var toMove: [(from: IndexPath, to: IndexPath)] = []
+
+        for (id, oldIndex) in oldIdIndexMap {
+            if newIdIndexMap[id] == nil {
+                toDelete.append(IndexPath(item: oldIndex, section: 0))
+            }
+        }
+
+        for (id, newIndex) in newIdIndexMap {
+            if let oldIndex = oldIdIndexMap[id] {
+                if oldIndex != newIndex {
+                    toMove.append((from: IndexPath(item: oldIndex, section: 0), to: IndexPath(item: newIndex, section: 0)))
+                }
+            } else {
+                toInsert.append(IndexPath(item: newIndex, section: 0))
+            }
+        }
+
+        collectionView.performBatchUpdates {
+            collectionView.deleteItems(at: toDelete)
+            collectionView.insertItems(at: toInsert)
+            for move in toMove {
+                collectionView.moveItem(at: move.from, to: move.to)
+            }
+        }
+        if collectionView(collectionView, numberOfItemsInSection: 0) == 0 {
+            collectionView.reloadData()
+        }
     }
 }
 
