@@ -18,12 +18,9 @@ public class ZZAPImageCell: ZZAPAssetCellBase {
     /// Icon displayed for Live Photo assets
     private let livePhotoIcon: UIImageView = {
         let imageView = UIImageView()
-        if #available(iOS 13.0, *) {
-            imageView.image = UIImage(systemName: "livephoto")
-            imageView.tintColor = .white
-            imageView.contentMode = .scaleAspectFit
-            imageView.isHidden = true
-        }
+        imageView.image = UIImage(zzap_named: "livephoto", tintColor: .white)
+        imageView.contentMode = .scaleAspectFit
+        imageView.isHidden = true
         return imageView
     }()
     

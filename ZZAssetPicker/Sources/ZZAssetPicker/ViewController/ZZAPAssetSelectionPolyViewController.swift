@@ -10,7 +10,7 @@ import Photos
 import SnapKit
 
 @objcMembers
-public class ZZAPAssetSelectionPolyViewController: UIViewController {
+public class ZZAPAssetSelectionPolyViewController: ZZAPBaseViewController {
 
     // MARK: - Properties
 
@@ -80,7 +80,7 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
         view.addSubview(tabView)
         tabView.setupTabs(tabs: self.tabTypes)
         tabView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.top.equalTo(contentTopConstraintTarget)
             make.left.right.equalToSuperview()
             make.height.equalTo(44)
         }
@@ -101,7 +101,7 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
             }
         } else {
             scrollView.snp.makeConstraints { make in
-                make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+                make.top.equalTo(contentTopConstraintTarget)
                 make.left.right.bottom.equalTo(view)
             }
         }
@@ -245,6 +245,36 @@ public class ZZAPAssetSelectionPolyViewController: UIViewController {
     }
 }
 
+extension ZZAPAssetSelectionPolyViewController {
+    
+    public override func requiresNavigationBarView() -> Bool {
+        true
+    }
+    
+    public override func navigationBarTitle() -> String? {
+        "ZZAsserPicker"
+    }
+    
+    public override func navigationBarLeftButtons() -> [UIButton] {
+        let closeButton = UIButton(type: .system)
+        let image = UIImage(zzap_named: "xmark")
+        closeButton.setImage(image, for: .normal)
+        closeButton.tintColor = .black
+        closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
+        closeButton.snp.makeConstraints { make in
+            make.width.height.equalTo(18)
+        }
+        return [closeButton]
+    }
+    
+    @objc private func closeButtonTapped() {
+        if let nav = self.navigationController {
+            nav.popViewController(animated: true)
+        } else {
+            self.dismiss(animated: true)
+        }
+    }
+}
 // MARK: - ZZAPSelectableDelegate
 
 extension ZZAPAssetSelectionPolyViewController: ZZAPSelectableDelegate {
