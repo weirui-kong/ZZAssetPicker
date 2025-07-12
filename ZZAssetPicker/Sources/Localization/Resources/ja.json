@@ -1,19 +1,43 @@
 {
-    "zzap_selection_indicator_btn_title_next": "次へ",
-    "zzap_selection_indicator_btn_title_oneclip": "ワンクリップ",
-    "zzap_tab_type_all": "すべて",
-    
-    "zzap_tab_type_videos": "ビデオ",
-    "zzap_tab_type_photos": "写真",
-    "zzap_tab_type_livePhotos": "ライブフォト",
-    
-    "zzap_thumbnail_image_quality_low": "低",
-    "zzap_thumbnail_image_quality_medium": "中",
-    "zzap_thumbnail_image_quality_high": "高",
-    "zzap_thumbnail_image_quality_device_scale": "デバイススケール",
-    
-    "zzap_sort_creation_date_desc": "作成日 ↓",
-    "zzap_sort_creation_date_asc": "作成日 ↑",
-    "zzap_sort_menu_section_title_sort_option": "並べ替えオプション",
-    "zzap_sort_menu_section_title_cancel": "キャンセル"
+  "zzap_selection_indicator_btn_title_next": "次へ",
+  "zzap_selection_indicator_btn_title_oneclip": "ワンクリップ",
+  "zzap_tab_type_all": "すべて",
+  
+  "zzap_tab_type_videos": "ビデオ",
+  "zzap_tab_type_photos": "写真",
+  "zzap_tab_type_livePhotos": "ライブフォト",
+  
+  "zzap_thumbnail_image_quality_low": "低",
+  "zzap_thumbnail_image_quality_medium": "中",
+  "zzap_thumbnail_image_quality_high": "高",
+  "zzap_thumbnail_image_quality_device_scale": "デバイススケール",
+  
+  "zzap_sort_creation_date_desc": "作成日 ↓",
+  "zzap_sort_creation_date_asc": "作成日 ↑",
+  "zzap_sort_menu_section_title_sort_option": "ソートオプション",
+  "zzap_sort_menu_section_title_cancel": "キャンセル",
+  
+  "zzap_validation_rule_resolution_pixel_size_invalid": "ピクセルサイズが無効または利用できません",
+  "zzap_validation_rule_resolution_too_small": "解像度が小さすぎます: %gx%g より大きい必要がありますが、実際は %dx%d です",
+  "zzap_validation_rule_resolution_too_large": "解像度が大きすぎます: %gx%g より小さい必要がありますが、実際は %dx%d です",
+  "zzap_validation_rule_resolution_out_of_range": "解像度が許容範囲外です: %g–%gx%g–%g の範囲が必要ですが、実際は %dx%d です",
+  "zzap_validation_rule_resolution_width_too_small": "幅が小さすぎます: %g より大きい必要がありますが、実際は %d です",
+  "zzap_validation_rule_resolution_width_too_large": "幅が大きすぎます: %g より小さい必要がありますが、実際は %d です",
+  "zzap_validation_rule_resolution_width_not_in_range": "幅が範囲外です: %g–%g の範囲が必要ですが、実際は %d です",
+  "zzap_validation_rule_resolution_height_too_small": "高さが小さすぎます: %g より大きい必要がありますが、実際は %d です",
+  "zzap_validation_rule_resolution_height_too_large": "高さが大きすぎます: %g より小さい必要がありますが、実際は %d です",
+  "zzap_validation_rule_resolution_height_not_in_range": "高さが範囲外です: %g–%g の範囲が必要ですが、実際は %d です",
+  
+  "zzap_validation_rule_duration_too_short": "メディアが短すぎます: %.2fs より長い必要がありますが、実際は %.2fs です",
+  "zzap_validation_rule_duration_too_long": "メディアが長すぎます: %.2fs より短い必要がありますが、実際は %.2fs です",
+  "zzap_validation_rule_duration_out_of_range": "メディアの長さが範囲外です: %.2f–%.2fs の範囲が必要ですが、実際は %.2fs です",
+  
+  "zzap_validation_rule_face_image_unavailable": "画像を読み込めません",
+  "zzap_validation_rule_face_not_detected": "顔が検出されませんでした",
+  "zzap_validation_rule_face_detection_failed": "顔検出に失敗しました",
+  
+  "zzap_validation_rule_qrcode_image_unavailable": "QRコード検出用の画像を読み込めません",
+  "zzap_validation_rule_qrcode_detection_failed": "QRコード検出に失敗しました",
+  "zzap_validation_rule_qrcode_not_found": "画像にQRコードが検出されませんでした",
+  "zzap_validation_rule_qrcode_request_handler_failed": "リクエストハンドラに失敗しました"
 }

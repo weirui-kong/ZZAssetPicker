@@ -230,6 +230,17 @@ extension ZZAPAssetSelectionBaseViewController: UICollectionViewDataSource {
         
         return cell
     }
+    
+    public func collectionView(cellForAsset asset:ZZAPAsset) -> UICollectionViewCell? {
+        for cell in collectionView.visibleCells {
+            if let zzCell = cell as? ZZAPAssetCellBase {
+                if zzCell.asset?.id == asset.id {
+                    return zzCell
+                }
+            }
+        }
+        return nil
+    }
 }
 
 // MARK: - ZZAPSelectableDelegate
@@ -267,6 +278,9 @@ extension ZZAPAssetSelectionBaseViewController: ZZAPSelectableDelegate {
         if let failure = failure {
             print(failure.message + ", triggered by me.")
             print(failure.extra)
+            if let cell = collectionView(cellForAsset: asset) {
+                let tip = ZZAPTipView(targetView: cell, message: failure.message)
+            }
         }
     }
 
@@ -321,7 +335,6 @@ extension ZZAPAssetSelectionBaseViewController: ZZAPAssetCellBaseDelegate {
         } else {
             self.selectionController?.removeAsset?(self, at: index)
         }
-        
     }
 }
 

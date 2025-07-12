@@ -22,15 +22,15 @@ import Photos
     private let ruleType: ZZAPDurationRuleType
     private let minDuration: TimeInterval
     private let maxDuration: TimeInterval
-
+    
     @objc public static func greaterThan(duration: TimeInterval) -> ZZAPDurationRule {
         .init(type: .greaterThan, min: duration, max: .infinity)
     }
-
+    
     @objc public static func lessThan(duration: TimeInterval) -> ZZAPDurationRule {
         .init(type: .greaterThan, min: .zero, max: duration)
     }
-
+    
     @objc public static func within(min: TimeInterval, max: TimeInterval) -> ZZAPDurationRule {
         .init(type: .withinRange, min: min, max: max)
     }
@@ -44,7 +44,7 @@ import Photos
         self.minDuration = min
         self.maxDuration = max
     }
-
+    
     /// Validate asset duration.
     /// - Parameter asset: Asset to validate.
     /// - Returns: Validation failure if invalid; nil if valid or not a video.
@@ -52,38 +52,38 @@ import Photos
         guard asset.mediaType == .video || asset.mediaType == .audio else {
             return nil
         }
-
+        
         let actual = asset.duration
-
+        
         switch ruleType {
         case .greaterThan:
             if actual <= minDuration {
                 return ZZAPAssetValidationFailure(
                     code: "0x2101",
-                    message: "Medium too short: requires > \(minDuration)s, got \(actual)s",
+                    message: ZZAPLocalized("zzap_validation_rule_duration_too_short", minDuration, actual),
                     extra: ["duration": actual]
                 )
             }
-
+            
         case .lessThan:
             if actual >= maxDuration {
                 return ZZAPAssetValidationFailure(
                     code: "0x2102",
-                    message: "Medium too long: requires < \(maxDuration)s, got \(actual)s",
+                    message: ZZAPLocalized("zzap_validation_rule_duration_too_long", maxDuration, actual),
                     extra: ["duration": actual]
                 )
             }
-
+            
         case .withinRange:
             if actual < minDuration || actual > maxDuration {
                 return ZZAPAssetValidationFailure(
                     code: "0x2103",
-                    message: "Medium duration out of range: requires \(minDuration)–\(maxDuration)s, got \(actual)s",
+                    message: ZZAPLocalized("zzap_validation_rule_duration_out_of_range", minDuration, maxDuration, actual),
                     extra: ["duration": actual]
                 )
             }
         }
-
+        
         return nil
     }
 }

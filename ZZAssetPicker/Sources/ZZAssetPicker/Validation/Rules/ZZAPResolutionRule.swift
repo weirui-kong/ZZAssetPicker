@@ -69,7 +69,10 @@ private enum ZZAPResolutionRuleType {
 
     public func validate(asset: ZZAPAsset) -> ZZAPAssetValidationFailure? {
         guard asset.pixelWidth > 0, asset.pixelHeight > 0 else {
-            return ZZAPAssetValidationFailure(code: "0x2000", message: "Pixel size unavailable or invalid")
+            return ZZAPAssetValidationFailure(
+                code: "0x2000",
+                message: ZZAPLocalized("zzap_validation_rule_resolution_pixel_size_invalid")
+            )
         }
 
         let size = CGSize(width: CGFloat(asset.pixelWidth), height: CGFloat(asset.pixelHeight))
@@ -79,7 +82,7 @@ private enum ZZAPResolutionRuleType {
             if size.width < w || size.height < h {
                 return ZZAPAssetValidationFailure(
                     code: "0x2001",
-                    message: "Resolution too small: requires > \(w)x\(h), got \(Int(size.width))x\(Int(size.height))",
+                    message: ZZAPLocalized("zzap_validation_rule_resolution_too_small", w, h, Int(size.width), Int(size.height)),
                     extra: ["width": size.width, "height": size.height]
                 )
             }
@@ -88,7 +91,7 @@ private enum ZZAPResolutionRuleType {
             if size.width > w || size.height > h {
                 return ZZAPAssetValidationFailure(
                     code: "0x2002",
-                    message: "Resolution too large: requires < \(w)x\(h), got \(Int(size.width))x\(Int(size.height))",
+                    message: ZZAPLocalized("zzap_validation_rule_resolution_too_large", w, h, Int(size.width), Int(size.height)),
                     extra: ["width": size.width, "height": size.height]
                 )
             }
@@ -97,7 +100,7 @@ private enum ZZAPResolutionRuleType {
             if size.width < minW || size.width > maxW || size.height < minH || size.height > maxH {
                 return ZZAPAssetValidationFailure(
                     code: "0x2003",
-                    message: "Resolution out of allowed range: requires \(minW)–\(maxW)x\(minH)–\(maxH), got \(Int(size.width))x\(Int(size.height))",
+                    message: ZZAPLocalized("zzap_validation_rule_resolution_out_of_range", minW, maxW, minH, maxH, Int(size.width), Int(size.height)),
                     extra: ["width": size.width, "height": size.height]
                 )
             }
@@ -106,7 +109,7 @@ private enum ZZAPResolutionRuleType {
             if size.width < minW {
                 return ZZAPAssetValidationFailure(
                     code: "0x2004",
-                    message: "Width too small: requires > \(minW), got \(Int(size.width))",
+                    message: ZZAPLocalized("zzap_validation_rule_resolution_width_too_small", minW, Int(size.width)),
                     extra: ["width": size.width]
                 )
             }
@@ -115,7 +118,7 @@ private enum ZZAPResolutionRuleType {
             if size.width > maxW {
                 return ZZAPAssetValidationFailure(
                     code: "0x2005",
-                    message: "Width too large: requires < \(maxW), got \(Int(size.width))",
+                    message: ZZAPLocalized("zzap_validation_rule_resolution_width_too_large", maxW, Int(size.width)),
                     extra: ["width": size.width]
                 )
             }
@@ -124,7 +127,7 @@ private enum ZZAPResolutionRuleType {
             if size.width < min || size.width > max {
                 return ZZAPAssetValidationFailure(
                     code: "0x2006",
-                    message: "Width not in range: requires \(min)–\(max), got \(Int(size.width))",
+                    message: ZZAPLocalized("zzap_validation_rule_resolution_width_not_in_range", min, max, Int(size.width)),
                     extra: ["width": size.width]
                 )
             }
@@ -133,7 +136,7 @@ private enum ZZAPResolutionRuleType {
             if size.height < minH {
                 return ZZAPAssetValidationFailure(
                     code: "0x2007",
-                    message: "Height too small: requires > \(minH), got \(Int(size.height))",
+                    message: ZZAPLocalized("zzap_validation_rule_resolution_height_too_small", minH, Int(size.height)),
                     extra: ["height": size.height]
                 )
             }
@@ -142,7 +145,7 @@ private enum ZZAPResolutionRuleType {
             if size.height > maxH {
                 return ZZAPAssetValidationFailure(
                     code: "0x2008",
-                    message: "Height too large: requires < \(maxH), got \(Int(size.height))",
+                    message: ZZAPLocalized("zzap_validation_rule_resolution_height_too_large", maxH, Int(size.height)),
                     extra: ["height": size.height]
                 )
             }
@@ -151,7 +154,7 @@ private enum ZZAPResolutionRuleType {
             if size.height < min || size.height > max {
                 return ZZAPAssetValidationFailure(
                     code: "0x2009",
-                    message: "Height not in range: requires \(min)–\(max), got \(Int(size.height))",
+                    message: ZZAPLocalized("zzap_validation_rule_resolution_height_not_in_range", min, max, Int(size.height)),
                     extra: ["height": size.height]
                 )
             }
@@ -159,6 +162,7 @@ private enum ZZAPResolutionRuleType {
 
         return nil
     }
+
 
 
 }

@@ -37,7 +37,10 @@ import UIKit
         _ = semaphore.wait(timeout: .now() + 30)
 
         guard let cgImage = image?.cgImage else {
-            return ZZAPAssetValidationFailure(code: "0x2201", message: "Unable to load image")
+            return ZZAPAssetValidationFailure(
+                code: "0x2201",
+                message: ZZAPLocalized("zzap_validation_rule_face_image_unavailable")
+            )
         }
 
         let request = VNDetectFaceRectanglesRequest()
@@ -47,17 +50,19 @@ import UIKit
             try handler.perform([request])
             let hasFace = (request.results?.count ?? 0) > 0
             if requireFace && !hasFace {
-                return ZZAPAssetValidationFailure(code: "0x2202", message: "No face detected")
+                return ZZAPAssetValidationFailure(
+                    code: "0x2202",
+                    message: ZZAPLocalized("zzap_validation_rule_face_not_detected")
+                )
             }
         } catch {
             return ZZAPAssetValidationFailure(
                 code: "0x2203",
-                message: "Face detection failed",
+                message: ZZAPLocalized("zzap_validation_rule_face_detection_failed"),
                 extra: ["error": error.localizedDescription]
             )
         }
 
         return nil
     }
-
 }

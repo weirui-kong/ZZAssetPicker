@@ -16,5 +16,28 @@
     "zzap_sort_creation_date_asc": "Creation Date ↑",
     "zzap_sort_menu_section_title_sort_option": "Sort Options",
     "zzap_sort_menu_section_title_cancel": "Cancel",
-
+    
+    "zzap_validation_rule_resolution_pixel_size_invalid": "Pixel size unavailable or invalid",
+    "zzap_validation_rule_resolution_too_small": "Resolution too small: requires > %gx%g, got %dx%d",
+    "zzap_validation_rule_resolution_too_large": "Resolution too large: requires < %gx%g, got %dx%d",
+    "zzap_validation_rule_resolution_out_of_range": "Resolution out of allowed range: requires %g–%gx%g–%g, got %dx%d",
+    "zzap_validation_rule_resolution_width_too_small": "Width too small: requires > %g, got %d",
+    "zzap_validation_rule_resolution_width_too_large": "Width too large: requires < %g, got %d",
+    "zzap_validation_rule_resolution_width_not_in_range": "Width not in range: requires %g–%g, got %d",
+    "zzap_validation_rule_resolution_height_too_small": "Height too small: requires > %g, got %d",
+    "zzap_validation_rule_resolution_height_too_large": "Height too large: requires < %g, got %d",
+    "zzap_validation_rule_resolution_height_not_in_range": "Height not in range: requires %g–%g, got %d",
+    
+    "zzap_validation_rule_duration_too_short": "Medium too short: requires > %.2fs, got %.2fs",
+    "zzap_validation_rule_duration_too_long": "Medium too long: requires < %.2fs, got %.2fs",
+    "zzap_validation_rule_duration_out_of_range": "Medium duration out of range: requires %.2f–%.2fs, got %.2fs",
+    
+    "zzap_validation_rule_face_image_unavailable": "Unable to load image",
+    "zzap_validation_rule_face_not_detected": "No face detected",
+    "zzap_validation_rule_face_detection_failed": "Face detection failed",
+    
+    "zzap_validation_rule_qrcode_image_unavailable": "Unable to load image for QR code detection",
+    "zzap_validation_rule_qrcode_detection_failed": "QR code detection failed",
+    "zzap_validation_rule_qrcode_not_found": "No QR code detected in the image",
+    "zzap_validation_rule_qrcode_request_handler_failed": "Request handler failed"
 }

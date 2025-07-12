@@ -70,6 +70,7 @@ static inline id _Nullable ZZAPSafeValue(id _Nullable value) {
     selectoinConfiguration.selectionMode = ZZAPSelectionModeMultipleCompact;
     selectoinConfiguration.maximumSelection = 99;
     selectoinConfiguration.minimumSize = CGSizeMake(720, 1280);
+    selectoinConfiguration.maximumSize = CGSizeMake(8192, 8192);
     selectoinConfiguration.minimumDuration = 3;
     selectoinConfiguration.maximumDuration = 60;
     selectoinConfiguration.requireFaces = NO;
