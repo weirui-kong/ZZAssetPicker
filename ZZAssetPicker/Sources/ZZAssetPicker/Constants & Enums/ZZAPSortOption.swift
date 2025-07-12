@@ -18,3 +18,21 @@
         }
     }
 }
+
+extension ZZAPSortOption {
+    public var photoKitSortKey: String {
+        switch self {
+        case .creationDateAscending, .creationDateDescending:
+            return "creationDate"
+        }
+    }
+    
+    public var isAscending: Bool {
+        switch self {
+        case .creationDateAscending:
+            return true
+        case .creationDateDescending:
+            return false
+        }
+    }
+}

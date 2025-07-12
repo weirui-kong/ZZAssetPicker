@@ -1,9 +1,19 @@
 {
-  "zzap_selection_indicator_btn_title_next": "下一步",
-  "zzap_selection_indicator_btn_title_oneclip": "一剪",
-  "zzap_tab_type_all": "全部",
-  "zzap_tab_type_videos": "影片",
-  "zzap_tab_type_photos": "照片",
-  "zzap_tab_type_livePhotos": "動態照片"
+    "zzap_selection_indicator_btn_title_next": "下一步",
+    "zzap_selection_indicator_btn_title_oneclip": "一次剪輯",
+    "zzap_tab_type_all": "全部",
+    
+    "zzap_tab_type_videos": "影片",
+    "zzap_tab_type_photos": "照片",
+    "zzap_tab_type_livePhotos": "實況照片",
+    
+    "zzap_thumbnail_image_quality_low": "低",
+    "zzap_thumbnail_image_quality_medium": "中",
+    "zzap_thumbnail_image_quality_high": "高",
+    "zzap_thumbnail_image_quality_device_scale": "裝置比例",
+    
+    "zzap_sort_creation_date_desc": "建立日期 ↓",
+    "zzap_sort_creation_date_asc": "建立日期 ↑",
+    "zzap_sort_menu_section_title_sort_option": "排序選項",
+    "zzap_sort_menu_section_title_cancel": "取消"
 }
-

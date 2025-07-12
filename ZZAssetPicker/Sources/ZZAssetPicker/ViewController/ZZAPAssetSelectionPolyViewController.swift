@@ -17,6 +17,7 @@ public class ZZAPAssetSelectionPolyViewController: ZZAPBaseViewController {
     private var selectionController: ZZAPSelectable
 
     private var collections: [PHAssetCollection?] = []
+    private var currentCollection: PHAssetCollection?
 
     private var tabTypes: [ZZAPTabType]
     private let tabView = ZZAPTabView()
@@ -27,6 +28,9 @@ public class ZZAPAssetSelectionPolyViewController: ZZAPBaseViewController {
 
     public private(set) var config: ZZAssetPickerConfiguration
     
+    private var sortOption = ZZAPSortOption.creationDateDescending
+    private var menuButton: UIButton?
+
     // MARK: - Lifecycle
     
     init(config: ZZAssetPickerConfiguration, tabTypes: [ZZAPTabType], collections: [PHAssetCollection?] = [], selectionController: ZZAPSelectable, pageViewControllers: [ZZAPAssetSelectionBaseViewController]) {
@@ -181,8 +185,8 @@ public class ZZAPAssetSelectionPolyViewController: ZZAPBaseViewController {
         }
 
         if let defaultCollection = defaultCollection {
-            self.collections = [defaultCollection]
-            self.updateCollections(newCollections: [defaultCollection])
+            self.currentCollection = defaultCollection
+            updateCollection()
         }
     }
 
@@ -209,14 +213,12 @@ public class ZZAPAssetSelectionPolyViewController: ZZAPBaseViewController {
     }
 
 
-    // MARK: - Update Collections and Set Data Source
-    public func updateCollections(newCollections: [PHAssetCollection?]) {
-        self.collections = newCollections
+    // MARK: - Update Collection and Set Data Source
+    public func updateCollection() {
         for (index, tabType) in tabTypes.enumerated() {
             guard let vc = pageViewControllers[safe: index] else { continue }
-            let collection = newCollections.indices.contains(index) ? newCollections[index] : nil
             let options = PHFetchOptions()
-            options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+            options.sortDescriptors = [NSSortDescriptor(key: sortOption.photoKitSortKey, ascending: sortOption.isAscending)]
             switch tabType {
             case .videos:
                 options.predicate = NSPredicate(format: "mediaType == %d", PHAssetMediaType.video.rawValue)
@@ -229,6 +231,7 @@ public class ZZAPAssetSelectionPolyViewController: ZZAPBaseViewController {
             case .all:
                 break
             }
+            let collection = currentCollection
             DispatchQueue.global().async {
                 let fetchResult: PHFetchResult<PHAsset>
                 if let collection = collection {
@@ -238,6 +241,7 @@ public class ZZAPAssetSelectionPolyViewController: ZZAPBaseViewController {
                 }
                 let store = ZZAPAssetStore(fetchResult: fetchResult)
                 DispatchQueue.main.async {
+                    vc.collectionView.zzap_restoreFromConvergence()
                     vc.store = store
                 }
             }
@@ -246,19 +250,21 @@ public class ZZAPAssetSelectionPolyViewController: ZZAPBaseViewController {
 }
 
 extension ZZAPAssetSelectionPolyViewController {
-    
+
+
     public override func requiresNavigationBarView() -> Bool {
         true
     }
-    
+
     public override func navigationBarTitle() -> String? {
         "ZZAsserPicker"
     }
-    
+
     public override func navigationBarLeftButtons() -> [UIButton] {
         let closeButton = UIButton(type: .system)
         let image = UIImage(zzap_named: "xmark")
         closeButton.setImage(image, for: .normal)
+        closeButton.contentMode = .scaleAspectFit
         closeButton.tintColor = .black
         closeButton.addTarget(self, action: #selector(closeButtonTapped), for: .touchUpInside)
         closeButton.snp.makeConstraints { make in
@@ -266,7 +272,70 @@ extension ZZAPAssetSelectionPolyViewController {
         }
         return [closeButton]
     }
-    
+
+    public override func navigationBarRightButtons() -> [UIButton] {
+        let button = UIButton(type: .system)
+        let image = UIImage(zzap_named: "line.horizontal.3.decrease")
+        button.setImage(image, for: .normal)
+        button.contentMode = .scaleAspectFit
+        button.tintColor = .black
+        button.snp.makeConstraints { make in
+            make.width.height.equalTo(18)
+        }
+
+        menuButton = button
+
+        if #available(iOS 14.0, *) {
+            button.menu = makeSortMenu()
+            button.showsMenuAsPrimaryAction = true
+        } else {
+            button.addTarget(self, action: #selector(menuButtonTappedLegacy(_:)), for: .touchUpInside)
+        }
+        return [button]
+    }
+
+    @available(iOS 14.0, *)
+    private func makeSortMenu() -> UIMenu {
+        let creationDesc = UIAction(title: ZZAPSortOption.creationDateDescending.localizedString, state: sortOption == .creationDateDescending ? .on : .off) { [weak self] _ in
+            self?.updateSortOption(.creationDateDescending)
+        }
+        
+        let creationAsc = UIAction(title: ZZAPSortOption.creationDateAscending.localizedString, state: sortOption == .creationDateAscending ? .on : .off) { [weak self] _ in
+            self?.updateSortOption(.creationDateAscending)
+        }
+        return UIMenu(title: ZZAPLocalized("zzap_sort_menu_section_title_sort_option"), children: [creationDesc, creationAsc])
+    }
+
+    @objc private func menuButtonTappedLegacy(_ sender: UIButton) {
+        showLegacySortMenu()
+    }
+
+    private func showLegacySortMenu() {
+        let alert = UIAlertController(title: ZZAPLocalized("zzap_sort_menu_section_title_sort_option"), message: nil, preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: ZZAPSortOption.creationDateDescending.localizedString, style: .default, handler: { [weak self] _ in
+            self?.updateSortOption(.creationDateDescending)
+        }))
+        alert.addAction(UIAlertAction(title: ZZAPSortOption.creationDateAscending.localizedString, style: .default, handler: { [weak self] _ in
+            self?.updateSortOption(.creationDateAscending)
+        }))
+        
+        alert.addAction(UIAlertAction(title: ZZAPLocalized("zzap_sort_menu_section_title_cancel"), style: .cancel))
+        present(alert, animated: true)
+    }
+
+    private func updateSortOption(_ newOption: ZZAPSortOption) {
+        guard newOption != sortOption else { return }
+        sortOption = newOption
+        for vc in pageViewControllers {
+            vc.collectionView.zzap_convergeToCenter()
+        }
+        updateCollection()
+
+        if #available(iOS 14.0, *), let btn = menuButton {
+            btn.menu = makeSortMenu()
+        }
+    }
+
     @objc private func closeButtonTapped() {
         if let nav = self.navigationController {
             nav.popViewController(animated: true)
@@ -275,6 +344,7 @@ extension ZZAPAssetSelectionPolyViewController {
         }
     }
 }
+
 // MARK: - ZZAPSelectableDelegate
 
 extension ZZAPAssetSelectionPolyViewController: ZZAPSelectableDelegate {

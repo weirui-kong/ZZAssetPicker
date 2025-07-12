@@ -126,8 +126,8 @@
             filePath = "../ZZAssetPicker/Sources/ZZAssetPicker/ViewController/ZZAPAssetSelectionPolyViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "34"
-            endingLineNumber = "34"
+            startingLineNumber = "38"
+            endingLineNumber = "38"
             landmarkName = "init(config:tabTypes:collections:selectionController:pageViewControllers:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -142,8 +142,8 @@
             filePath = "../ZZAssetPicker/Sources/ZZAssetPicker/ViewController/ZZAPAssetSelectionPolyViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "159"
-            endingLineNumber = "159"
+            startingLineNumber = "163"
+            endingLineNumber = "163"
             landmarkName = "createPageController(for:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -258,6 +258,38 @@
             endingLineNumber = "267"
             landmarkName = "collectionView(_:cellForItemAt:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "32D474B3-BAA0-498D-B2D3-56597CD7D19F"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../ZZAssetPicker/Sources/ZZAssetPicker/ViewController/ZZAPAssetSelectionBaseViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "42"
+            endingLineNumber = "42"
+            landmarkName = "store"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B7C274A5-21A2-4961-B391-339409E38CF9"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "../ZZAssetPicker/Sources/ZZAssetPicker/Source &amp; Store/ZZAPAssetStore.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "26"
+            endingLineNumber = "26"
+            landmarkName = "count"
+            landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

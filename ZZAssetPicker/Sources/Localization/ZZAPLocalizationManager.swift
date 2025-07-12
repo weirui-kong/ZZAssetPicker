@@ -12,7 +12,7 @@ public class ZZAPLocalizationManager: NSObject {
     
     public static let shared = ZZAPLocalizationManager()
     
-    public var currentLanguage: String = Locale.preferredLanguages.first ?? "en"
+    public var currentLanguage: String = "ja" // Locale.preferredLanguages.first ?? "en"
 
     public var provider: ZZAPLocalizationProvider?
 

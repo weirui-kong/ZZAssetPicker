@@ -78,7 +78,7 @@ public class ZZAPAssetSelectionBaseViewController: UIViewController {
 
     // MARK: - Internal State
     
-    private var collectionView: UICollectionView!
+    private(set) var collectionView: UICollectionView!
     private let loadingIndicator: UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(style: .gray)
         indicator.hidesWhenStopped = true

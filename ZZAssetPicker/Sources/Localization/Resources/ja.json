@@ -1,8 +1,19 @@
 {
-  "zzap_selection_indicator_btn_title_next": "次へ",
-  "zzap_selection_indicator_btn_title_oneclip": "ワンクリップ",
-  "zzap_tab_type_all": "すべて",
-  "zzap_tab_type_videos": "ビデオ",
-  "zzap_tab_type_photos": "写真",
-  "zzap_tab_type_livePhotos": "ライブフォト"
+    "zzap_selection_indicator_btn_title_next": "次へ",
+    "zzap_selection_indicator_btn_title_oneclip": "ワンクリップ",
+    "zzap_tab_type_all": "すべて",
+    
+    "zzap_tab_type_videos": "ビデオ",
+    "zzap_tab_type_photos": "写真",
+    "zzap_tab_type_livePhotos": "ライブフォト",
+    
+    "zzap_thumbnail_image_quality_low": "低",
+    "zzap_thumbnail_image_quality_medium": "中",
+    "zzap_thumbnail_image_quality_high": "高",
+    "zzap_thumbnail_image_quality_device_scale": "デバイススケール",
+    
+    "zzap_sort_creation_date_desc": "作成日 ↓",
+    "zzap_sort_creation_date_asc": "作成日 ↑",
+    "zzap_sort_menu_section_title_sort_option": "並べ替えオプション",
+    "zzap_sort_menu_section_title_cancel": "キャンセル"
 }

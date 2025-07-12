@@ -12,7 +12,9 @@
     "zzap_thumbnail_image_quality_high": "High",
     "zzap_thumbnail_image_quality_device_scale": "Device Scale",
     
-    "zzap_sort_creation_date_asc": "Creation Date ↑",
     "zzap_sort_creation_date_desc": "Creation Date ↓",
-    
+    "zzap_sort_creation_date_asc": "Creation Date ↑",
+    "zzap_sort_menu_section_title_sort_option": "Sort Options",
+    "zzap_sort_menu_section_title_cancel": "Cancel",
+
 }
