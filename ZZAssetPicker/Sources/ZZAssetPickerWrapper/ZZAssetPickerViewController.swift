@@ -35,7 +35,8 @@ public class ZZAssetPickerViewController: ZZAPAssetSelectionPolyViewController {
         let validationManager = ZZAPAssetValidatorManager(rules: rules)
         var selectionController = ZZAPSelectionControllerCommon(validationManager: validationManager, selectionMode: config.selectionConfig.selectionMode, maximumSelection: config.selectionConfig.maximumSelection)
         
-        super.init(config: config, tabTypes: tabTypes, selectionController: selectionController, pageViewControllers: [])
+        let collectionPresenter = ZZAPPHCollectionPresenter()
+        super.init(config: config, tabTypes: tabTypes, collectionPresenter: collectionPresenter, selectionController: selectionController, pageViewControllers: [])
     }
     
     public override func viewDidLoad() {

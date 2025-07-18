@@ -84,14 +84,14 @@ extension UICollectionView {
         self.zzap_snapshotViews = snapshots
 
         for (index, snapshot) in snapshots.enumerated() {
-            let delay = Double(index) * 0.1 / Double(snapshots.count)
+            let delay = Double(index) * 0.15 / Double(snapshots.count)
             
             UIView.animate(
-                withDuration: 10,
+                withDuration: 1,
                 delay: delay,
                 usingSpringWithDamping: 0.15,
-                initialSpringVelocity: 0.9,
-                options: [.curveEaseInOut, .allowUserInteraction],
+                initialSpringVelocity: 0.95,
+                options: [.curveEaseInOut, .allowUserInteraction, .repeat, .autoreverse],
                 animations: {
                     let angle = baseAngle + CGFloat(index) * angleStep
                     let rotation = CGAffineTransform(rotationAngle: angle)
@@ -101,6 +101,11 @@ extension UICollectionView {
                     )
                     snapshot.transform = rotation.concatenating(translation)
                     snapshot.alpha = 0.8
+                    var transform3D = CATransform3DIdentity
+                    transform3D.m34 = -1.0 / 500.0 // 透视
+                    transform3D = CATransform3DRotate(transform3D, CGFloat.pi / 16, 1, 0, 0)
+                    transform3D = CATransform3DRotate(transform3D, CGFloat.pi / 16, 0, 1, 0)
+                    snapshot.layer.transform = transform3D
                 },
                 completion: { _ in
                     if index == snapshots.count - 1 {
@@ -117,8 +122,8 @@ extension UICollectionView {
     func zzap_restoreFromConvergence() {
         if let startTime = self.zzap_convergeStartTime {
             let elapsedTime = Date().timeIntervalSince(startTime)
-            if elapsedTime < 0.8 {
-                let delay = 0.8 - elapsedTime
+            if elapsedTime < 1.2 {
+                let delay = 1.2 - elapsedTime
                 DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
                     self?.zzap_restoreFromConvergence()
                 }

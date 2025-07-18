@@ -16,8 +16,8 @@ public class ZZAPAssetSelectionPolyViewController: ZZAPBaseViewController {
 
     private var selectionController: ZZAPSelectable
 
-    private var collections: [PHAssetCollection?] = []
-    private var currentCollection: PHAssetCollection?
+    private var collectionPresenter: ZZAPCollectionPresenter
+    private let collectionPresenterView = ZZAPCollectionPresenterView()
 
     private var tabTypes: [ZZAPTabType]
     private let tabView = ZZAPTabView()
@@ -33,10 +33,10 @@ public class ZZAPAssetSelectionPolyViewController: ZZAPBaseViewController {
 
     // MARK: - Lifecycle
     
-    init(config: ZZAssetPickerConfiguration, tabTypes: [ZZAPTabType], collections: [PHAssetCollection?] = [], selectionController: ZZAPSelectable, pageViewControllers: [ZZAPAssetSelectionBaseViewController]) {
+    init(config: ZZAssetPickerConfiguration, tabTypes: [ZZAPTabType], collectionPresenter: ZZAPCollectionPresenter, selectionController: ZZAPSelectable, pageViewControllers: [ZZAPAssetSelectionBaseViewController]) {
         self.config = config
         self.tabTypes = tabTypes
-        self.collections = collections
+        self.collectionPresenter = collectionPresenter
         self.selectionController = selectionController
         self.pageViewControllers = pageViewControllers
         super.init(nibName: nil, bundle: nil)
@@ -49,17 +49,15 @@ public class ZZAPAssetSelectionPolyViewController: ZZAPBaseViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        selectionController.addSelectableDelegate?(self)
+        setupCollectionPresenterView()
         setupTabView()
         setupScrollView()
         setupPages()
         setupIndicator()
         setupCoordinator()
-        // If collections is empty, fetch system albums
-        if collections.isEmpty {
-            fetchQuickDefaultCollection()
-            fetchSystemCollections()
-        }
+        selectionController.addSelectableDelegate?(self)
+        collectionPresenter.addCollectionDelegate?(self)
+        collectionPresenter.reloadCollections()
     }
     
     private var didPlaceTabViewIndicator = false
@@ -80,11 +78,23 @@ public class ZZAPAssetSelectionPolyViewController: ZZAPBaseViewController {
     }
 
     // MARK: - Setup Tab View
+    private func setupCollectionPresenterView() {
+        view.addSubview(collectionPresenterView)
+        collectionPresenterView.presenter = collectionPresenter
+        collectionPresenterView.onSelect = { [weak self] collection in
+            
+        }
+        collectionPresenterView.snp.makeConstraints { make in
+            make.top.equalTo(contentTopConstraintTarget)
+            make.left.right.equalToSuperview()
+        }
+    }
+
     private func setupTabView() {
         view.addSubview(tabView)
         tabView.setupTabs(tabs: self.tabTypes)
         tabView.snp.makeConstraints { make in
-            make.top.equalTo(contentTopConstraintTarget)
+            make.top.equalTo(collectionPresenterView.snp.bottom)
             make.left.right.equalToSuperview()
             make.height.equalTo(44)
         }
@@ -173,46 +183,6 @@ public class ZZAPAssetSelectionPolyViewController: ZZAPBaseViewController {
         return viewController
     }
 
-    // MARK: - Fetch System Collections
-    private func fetchQuickDefaultCollection() {
-        // assetCollectionType = .smartAlbum (2), subtype = 209
-        // Which is almost equal to `all photos`
-        let quickAlbums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: PHAssetCollectionSubtype(rawValue: 209) ?? .any, options: nil)
-        var defaultCollection: PHAssetCollection? = nil
-        quickAlbums.enumerateObjects { (collection, _, stop) in
-            defaultCollection = collection
-            stop.pointee = true
-        }
-
-        if let defaultCollection = defaultCollection {
-            self.currentCollection = defaultCollection
-            updateCollection()
-        }
-    }
-
-    private func fetchSystemCollections() {
-        DispatchQueue.global().async { [weak self] in
-            guard let self = self else { return }
-
-            var collections: [PHAssetCollection] = []
-
-            let smartAlbums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: nil)
-            smartAlbums.enumerateObjects { (collection, _, _) in
-                collections.append(collection)
-            }
-
-            let userAlbums = PHAssetCollection.fetchAssetCollections(with: .album, subtype: .any, options: nil)
-            userAlbums.enumerateObjects { (collection, _, _) in
-                collections.append(collection)
-            }
-            
-            DispatchQueue.main.async {
-                self.collections = collections
-            }
-        }
-    }
-
-
     // MARK: - Update Collection and Set Data Source
     public func updateCollection() {
         for (index, tabType) in tabTypes.enumerated() {
@@ -231,7 +201,7 @@ public class ZZAPAssetSelectionPolyViewController: ZZAPBaseViewController {
             case .all:
                 break
             }
-            let collection = currentCollection
+            let collection = collectionPresenter.currentCollection
             DispatchQueue.global().async {
                 let fetchResult: PHFetchResult<PHAsset>
                 if let collection = collection {
@@ -360,6 +330,15 @@ extension ZZAPAssetSelectionPolyViewController: ZZAPSelectableDelegate {
     
     public func selectable(_ selectable: any ZZAPSelectable, from sender: AnyObject?, didEndSelectionValidatoin asset: any ZZAPAsset, mayFail failure: ZZAPAssetValidationFailure?) {
         self.view.isUserInteractionEnabled = true
+    }
+}
+
+// MARK: - ZZAPCollectionPresenterDelegate
+
+extension ZZAPAssetSelectionPolyViewController: ZZAPCollectionPresenterDelegate {
+
+    public func collectionPresenter(_ presenter: ZZAPCollectionPresenter, didUpdateCurrentCollection collection: PHAssetCollection?) {
+        updateCollection()
     }
 }
 
