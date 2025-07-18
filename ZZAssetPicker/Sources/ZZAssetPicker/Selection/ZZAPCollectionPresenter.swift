@@ -24,3 +24,4 @@ import UIKit
     @objc optional func addCollectionDelegate(_ delegate: ZZAPCollectionPresenterDelegate)
     @objc optional func removeCollectionDelegate(_ delegate: ZZAPCollectionPresenterDelegate)
 } 
+ 

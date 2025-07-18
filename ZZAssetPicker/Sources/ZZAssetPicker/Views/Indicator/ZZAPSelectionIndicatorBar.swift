@@ -10,7 +10,7 @@ import SnapKit
 
 @objcMembers
 public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
-
+    
     public weak var delegate: ZZAPSelectableDelegate?
     
     public var selectionController: ZZAPSelectable? {
@@ -23,18 +23,18 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
     }
     
     private var previouslySelectedAssets = [ZZAPAsset]()
-
+    
     public var isExpanded: Bool  {
         selectionController?.selectedAssets.count ?? 0 > 0
     }
-
+    
     private let blurView: UIVisualEffectView
     private let contentView: UIView
     private let collectionView: UICollectionView
     private let buttonStackView: UIStackView
     private let composeButton: UIButton
     private let nextButton: UIButton
-
+    
     public override init(frame: CGRect) {
         if ZZAPDeviceSupport.supportsBlurEffect {
             let blurEffect: UIBlurEffect
@@ -51,18 +51,18 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
         }
         
         contentView = UIView()
-
+        
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.minimumLineSpacing = kZZAPSelectionShapeBadgeViewRadius * 0.5
         layout.minimumInteritemSpacing = kZZAPSelectionShapeBadgeViewRadius * 1.5
         layout.itemSize = CGSize(width: 72, height: 72)
-
+        
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.showsHorizontalScrollIndicator = false
         collectionView.backgroundColor = .clear
         collectionView.contentInset = UIEdgeInsets(top: kZZAPSelectionShapeBadgeViewRadius, left: kZZAPSelectionShapeBadgeViewRadius, bottom: kZZAPSelectionShapeBadgeViewRadius, right: kZZAPSelectionShapeBadgeViewRadius)
-
+        
         composeButton = UIButton(type: .system)
         composeButton.setTitle(ZZAPLocalized("zzap_selection_indicator_btn_title_oneclip"), for: .normal)
         composeButton.setTitleColor(.white, for: .normal)
@@ -71,7 +71,7 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
         composeButton.layer.cornerRadius = 8
         composeButton.contentEdgeInsets = UIEdgeInsets(top: 6, left: 16, bottom: 6, right: 16)
         
-
+        
         nextButton = UIButton(type: .system)
         nextButton.setTitle(ZZAPLocalized("zzap_selection_indicator_btn_title_next"), for: .normal)
         nextButton.setTitleColor(.white, for: .normal)
@@ -79,17 +79,17 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
         nextButton.titleLabel?.font = .boldSystemFont(ofSize: 14)
         nextButton.layer.cornerRadius = 8
         nextButton.contentEdgeInsets = UIEdgeInsets(top: 6, left: 16, bottom: 6, right: 16)
-
+        
         buttonStackView = UIStackView(arrangedSubviews: [nextButton, composeButton])
         buttonStackView.axis = .horizontal
         buttonStackView.spacing = 8
         buttonStackView.alignment = .center
         buttonStackView.distribution = .equalSpacing
-
+        
         super.init(frame: frame)
         setupUI()
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -111,68 +111,74 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
         
         return CGSize(width: UIView.noIntrinsicMetric, height: totalHeight)
     }
-
+    
     private func setupUI() {
         layer.masksToBounds = true
         layer.cornerRadius = 12
-
+        
         addSubview(blurView)
         blurView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-
+        
         addSubview(contentView)
         contentView.snp.makeConstraints { make in
             make.top.left.right.equalToSuperview()
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom)
         }
-
+        
         contentView.addSubview(collectionView)
         contentView.addSubview(buttonStackView)
-
+        
         collectionView.dataSource = self
         collectionView.delegate = self
         collectionView.register(
             ZZAPIndicatorAssetCell.self,
             forCellWithReuseIdentifier: ZZAPIndicatorAssetCell.reuseIdentifier
         )
-
+        
         collectionView.snp.makeConstraints { make in
             make.left.right.top.equalToSuperview().inset(12)
             make.height.equalTo(isExpanded ? 96 : 0)
         }
-
+        
         buttonStackView.snp.makeConstraints { make in
             make.right.equalToSuperview().inset(12)
             make.height.equalTo(32)
             make.bottom.equalToSuperview().inset(8)
         }
-
+        
         composeButton.addTarget(self, action: #selector(didTapCompose), for: .touchUpInside)
         nextButton.addTarget(self, action: #selector(didTapNext), for: .touchUpInside)
+        updateExpansionState(animated: true)
         updateButtonStyleIfNeeded()
     }
     
     private func updateExpansionState(animated: Bool) {
         let targetHeight: CGFloat = isExpanded ? 96 : 0
-
+        
         if animated {
             self.collectionView.snp.updateConstraints { make in
                 make.height.equalTo(targetHeight)
             }
             self.invalidateIntrinsicContentSize()
             
-            UIView.animate(
-                withDuration: 0.5,
-                delay: 0,
-                usingSpringWithDamping: 0.8,
-                initialSpringVelocity: 0.5,
-                options: [.curveEaseInOut],
-                animations: {
-                    self.superview?.layoutIfNeeded()
-                },
-                completion: nil
-            )
+            if UIView.inheritedAnimationDuration > 0 {
+                self.superview?.layoutIfNeeded()
+            } else {
+                UIView.animate(
+                    withDuration: 0.5,
+                    delay: 0,
+                    usingSpringWithDamping: 0.8,
+                    initialSpringVelocity: 0.5,
+                    options: [.curveEaseInOut],
+                    animations: {
+                        self.superview?.layoutIfNeeded()
+                    },
+                    completion: nil
+                )
+            }
+            
         } else {
             collectionView.snp.updateConstraints { make in
                 make.height.equalTo(targetHeight)
@@ -180,16 +186,16 @@ public class ZZAPSelectionIndicatorBar: UIView, ZZAPSelectionIndicator {
             invalidateIntrinsicContentSize()
         }
     }
-
-
+    
+    
     public func reloadSelectionDisplay() {
         collectionView.reloadData()
         updateExpansionState(animated: false)
     }
-
+    
     @objc private func didTapNext() {
     }
-
+    
     @objc private func didTapCompose() {
     }
 }
@@ -220,13 +226,13 @@ extension ZZAPSelectionIndicatorBar: ZZAPSelectableDelegate {
         var toDelete: [IndexPath] = []
         var toInsert: [IndexPath] = []
         var toMove: [(from: IndexPath, to: IndexPath)] = []
-
+        
         for (id, oldIndex) in oldIdIndexMap {
             if newIdIndexMap[id] == nil {
                 toDelete.append(IndexPath(item: oldIndex, section: 0))
             }
         }
-
+        
         for (id, newIndex) in newIdIndexMap {
             if let oldIndex = oldIdIndexMap[id] {
                 if oldIndex != newIndex {
@@ -236,7 +242,7 @@ extension ZZAPSelectionIndicatorBar: ZZAPSelectableDelegate {
                 toInsert.append(IndexPath(item: newIndex, section: 0))
             }
         }
-
+        
         collectionView.performBatchUpdates {
             collectionView.deleteItems(at: toDelete)
             collectionView.insertItems(at: toInsert)
@@ -262,7 +268,7 @@ extension ZZAPSelectionIndicatorBar: UICollectionViewDataSource, UICollectionVie
     public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return selectionController?.selectedAssets.count ?? 0
     }
-
+    
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ZZAPIndicatorAssetCell.reuseIdentifier, for: indexPath) as? ZZAPIndicatorAssetCell,

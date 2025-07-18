@@ -53,7 +53,9 @@ public class ZZAPAssetSelectionPolyViewController: ZZAPBaseViewController {
         setupTabView()
         setupScrollView()
         setupPages()
-        setupIndicator()
+//        view.setNeedsLayout()
+//        view.layoutIfNeeded()
+        setupIndicator() // Must call after layout, since it has to access safeArea of its superview to calculate intrinsic size; or call `invalidateIntrinsicContentSize` after layouting subviews
         setupCoordinator()
         selectionController.addSelectableDelegate?(self)
         collectionPresenter.addCollectionDelegate?(self)
@@ -68,6 +70,7 @@ public class ZZAPAssetSelectionPolyViewController: ZZAPBaseViewController {
             tabView.setSelectedIndex(tabView.selectedIndex, animated: false)
             didPlaceTabViewIndicator.toggle()
         }
+        indicatorBar.invalidateIntrinsicContentSize()
     }
     
     public override func viewWillAppear(_ animated: Bool) {

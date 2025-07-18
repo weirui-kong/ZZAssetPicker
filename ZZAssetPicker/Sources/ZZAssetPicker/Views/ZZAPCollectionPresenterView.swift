@@ -78,8 +78,22 @@ public class ZZAPCollectionPresenterView: UIView {
             counts[cacheKey] = count
             assetCountCache[cacheKey] = count
         }
-        self.snp.updateConstraints { make in
-            make.height.equalTo(capsuleHeight + verticalPadding * 2)
+        let targetHeight = capsuleHeight + verticalPadding * 2
+        if self.frame.height < 1 {
+            self.snp.updateConstraints { make in
+                make.height.equalTo(targetHeight)
+            }
+            if UIView.inheritedAnimationDuration > 0 {
+                self.superview?.layoutIfNeeded()
+            } else {
+                UIView.animate(withDuration: 0.5, delay: 0, usingSpringWithDamping: 0.7, initialSpringVelocity: 0.2) {
+                    self.superview?.layoutIfNeeded()
+                }
+            }
+        } else {
+            self.snp.updateConstraints { make in
+                make.height.equalTo(targetHeight)
+            }
         }
         let currentId = presenter.currentCollection?.localIdentifier
         for (idx, collection) in presenter.collections.enumerated() {
@@ -143,13 +157,6 @@ public class ZZAPCollectionPresenterView: UIView {
             presenter.updateCollection(collection)
             onSelect?(collection)
         }
-        UIView.animate(withDuration: 0.2, delay: 0, options: [.curveEaseInOut], animations: {
-            sender.transform = CGAffineTransform(scaleX: 1.08, y: 1.08)
-        }, completion: { _ in
-            UIView.animate(withDuration: 0.15) {
-                sender.transform = .identity
-            }
-        })
     }
 }
 
